@@ -19,14 +19,16 @@ import src.com.mygdx.game.Models.User;
 
 public class LoginMenu implements Screen {
 
-    private TextField usernameField, passwordField , newPasswordField;
-    private TextButton loginButton , forgetPasswordButton;
+    private TextField usernameField, passwordField, newPasswordField;
+    private TextButton loginButton, forgetPasswordButton , newPasswordConfirmButton;
     private Stage stage;
     private Table mainTable = new Table();
     private Label errorLabel;
     private Skin skin = GameManager.getSkin();
     private LoginMenuController controller;
-
+    private boolean first = true;
+    Table buttonTable = new Table();
+    private User currentUser;
 
     @Override
     public void show() {
@@ -36,7 +38,7 @@ public class LoginMenu implements Screen {
         createLoginScreen();
     }
 
-    private void createLoginScreen(){
+    private void createLoginScreen() {
         mainTable.setFillParent(true);
         mainTable.defaults().pad(10);
         Label titleLabel = new Label(">> Login Menu <<", skin);
@@ -47,9 +49,11 @@ public class LoginMenu implements Screen {
         mainTable.add(usernameField).width(180).height(30).row();
         mainTable.add(new Label("Password", skin)).right();
         mainTable.add(passwordField).width(180).height(30).row();
+        passwordField.setPasswordMode(true);
+        passwordField.setPasswordCharacter('*');
         stage.addActor(mainTable);
 
-        Table buttonTable = new Table();
+
         loginButton = new TextButton("Login", skin);
         forgetPasswordButton = new TextButton("Forget Password", skin);
         buttonTable.add(loginButton).width(180).height(70).row();
@@ -59,28 +63,40 @@ public class LoginMenu implements Screen {
         errorLabel.setColor(Color.RED);
         errorLabel.setSize(400, 30);
         errorLabel.setFontScale(0.8f);
-        mainTable.add(errorLabel).colspan(2).padTop(10);
+        mainTable.add(errorLabel).colspan(2).pad(10);
+        addListeners();
 
 
     }
 
-    private void addListeners(){
+    private void addListeners() {
         loginButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 String username = usernameField.getText();
                 String password = passwordField.getText();
-                User thisUser = null;
                 errorLabel.setText("");
 
+                if (username.isEmpty() || password.isEmpty()) {
+                    errorLabel.setText("Please fill all the fields");
+                    return;
+                }
+
                 //find user by username
-                for (User user : GameManager.getUsers()) {
-                    if (user.getUsername().equals(username)) {
-                        thisUser = user;
-                        break;
+                if (!GameManager.getUsers().isEmpty()) {
+                    for (User user : GameManager.getUsers()) {
+                        if (user.getUsername().equals(username)) {
+                            currentUser = user;
+                            break;
+                        }
                     }
                 }
-                if (!controller.checkPassword(thisUser,password)){
+
+                if (currentUser == null) {
+                    errorLabel.setText("User not found");
+                    return;
+                }
+                if (!controller.checkPassword(currentUser, password)) {
                     errorLabel.setText("Wrong Password");
                 }
             }
@@ -90,12 +106,56 @@ public class LoginMenu implements Screen {
         forgetPasswordButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                Label changePassword = new Label("set new Password", skin);
-                passwordField = new TextField("", skin);
-                mainTable.add(changePassword).width(180).height(30).row();
-                mainTable.add(passwordField).width(180).height(30).row();
+                errorLabel.setColor(Color.RED);
+                if (first) {
+                    String username = usernameField.getText();
+                    if (usernameField.getText().isEmpty()) {
+                        errorLabel.setText("Please first enter username");
+                        return;
+                    }
+
+                    //find user by username
+                    if (!GameManager.getUsers().isEmpty()) {
+                        for (User user : GameManager.getUsers()) {
+                            if (user.getUsername().equals(username)) {
+                                currentUser = user;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (currentUser == null) {
+                        errorLabel.setText("User not found");
+                        return;
+                    }
+                    Label changePassword = new Label("Set a new Password", skin);
+                    newPasswordField = new TextField("", skin);
+
+                    buttonTable.add(changePassword).padTop(15).center().row();
+                    changePassword.setFontScale(0.8f);
+                    buttonTable.add(newPasswordField).width(180).height(30).padTop(10).center().row();
+                    forgetPasswordButton.setText("confirm");
+                    first = false;
+                }
+                if (!first) {
+                    String newPassword = newPasswordField.getText();
+                    if (newPassword.isEmpty()) {
+                        errorLabel.setText("Please fill all the fields");
+                        return;
+                    }
+                    SignUpController signUpController = new SignUpController();
+                    String error = signUpController.checkPasswordStrength(newPassword);
+                    if (error != null) {
+                        errorLabel.setText(error);
+                        return;
+                    }
+                    currentUser.setPassword(newPassword);
+                    errorLabel.setText("password changed successfully");
+                    errorLabel.setColor(Color.GREEN);
+                }
             }
         });
+
     }
 
     @Override
