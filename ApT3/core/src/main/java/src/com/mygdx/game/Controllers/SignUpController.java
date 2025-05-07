@@ -9,8 +9,8 @@ public class SignUpController {
 
 
     public String isUsernameTaken(String username) {
-        for (User user : GameManager.getUsers()){
-            if (user.getUsername().equals(username)){
+        for (User user : GameManager.getUsers()) {
+            if (user.getUsername().equals(username)) {
                 return "This username is already taken!";
             }
         }
@@ -24,7 +24,8 @@ public class SignUpController {
 
         if (!Pattern.compile("[@#$%&*)(_]+").matcher(password).find()
             || !Pattern.compile("[0-9]+").matcher(password).find()
-             || !Pattern.compile("[a-zA-Z]+").matcher(password).find()) {
+            || !Pattern.compile("[a-z]+").matcher(password).find()
+            || !Pattern.compile("[A-Z]+").matcher(password).find()) {
             return "Entered password isn't strong enough";
         }
         return null;

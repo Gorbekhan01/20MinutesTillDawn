@@ -30,15 +30,13 @@ public class SignUpMenu implements Screen {
     private Image avatarImage;
     private TextButton changeAvatarButton;
     private Table mainTable = new Table();
-    private User user;
+    private User user = new User(null,null);;
 
     @Override
     public void show() {
         signUpController = new SignUpController();
         stage = new Stage(new ScreenViewport());
         Gdx.input.setInputProcessor(stage);
-        user = new User(null,null);
-
         skin = GameManager.getSkin();
 
         createSignUpForm();
@@ -152,7 +150,10 @@ public class SignUpMenu implements Screen {
         guestButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                ((Game) Gdx.app.getApplicationListener()).setScreen(Menu.LOGIN_MENU.getScreen());
+                user.setUsername("Guest");
+                user.setAvatarNumber(1);
+                GameManager.setCurrentUser(user);
+                ((Game) Gdx.app.getApplicationListener()).setScreen(Menu.MAIN_MENU.getScreen());
             }
         });
 

@@ -2,6 +2,7 @@ package src.com.mygdx.game.Models;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import src.com.mygdx.game.MainGame;
 import src.com.mygdx.game.Views.MainMenu;
@@ -13,11 +14,13 @@ public class GameManager {
     private static MainGame game;
     private static final Skin skin = new Skin(Gdx.files.internal("Skin/star-soldier-ui.json"));;
     private static Screen screen;
+    private static User currentUser = null;
     private static Menu currentMenu = Menu.OPENING_SCREEN;
     private static final ArrayList<User> users = new ArrayList<>();
     public static void setGame(MainGame mainGame) {
         game = mainGame;
     }
+    private static Music currentMusic;
 
     public static MainGame getGame() {
         return game;
@@ -57,5 +60,24 @@ public class GameManager {
         return avatars;
     }
 
+    public static User getCurrentUser() {
+        return currentUser;
+    }
+
+    public static void setCurrentUser(User currentUserTemp) {
+        currentUser = currentUserTemp;
+    }
+
+    public static void setMusicVolume(float volume) {
+        currentMusic.setVolume(volume);
+    }
+
+    public static void setMusic(Music music) {
+        currentMusic = music;
+    }
+
+    public static void changeMusic(int number) {
+        MainGame.playMusic(number);
+    }
 
 }

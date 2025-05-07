@@ -20,14 +20,14 @@ import src.com.mygdx.game.Models.User;
 public class LoginMenu implements Screen {
 
     private TextField usernameField, passwordField, newPasswordField;
-    private TextButton loginButton, forgetPasswordButton , newPasswordConfirmButton;
+    private TextButton loginButton, forgetPasswordButton , newPasswordConfirmButton , backButton;
     private Stage stage;
-    private Table mainTable = new Table();
+    private Table mainTable ;
     private Label errorLabel;
     private Skin skin = GameManager.getSkin();
     private LoginMenuController controller;
     private boolean first = true;
-    Table buttonTable = new Table();
+    Table buttonTable;
     private User currentUser;
 
     @Override
@@ -39,6 +39,7 @@ public class LoginMenu implements Screen {
     }
 
     private void createLoginScreen() {
+        mainTable = new Table();
         mainTable.setFillParent(true);
         mainTable.defaults().pad(10);
         Label titleLabel = new Label(">> Login Menu <<", skin);
@@ -53,11 +54,13 @@ public class LoginMenu implements Screen {
         passwordField.setPasswordCharacter('*');
         stage.addActor(mainTable);
 
-
+        buttonTable = new Table();
         loginButton = new TextButton("Login", skin);
+        backButton = new TextButton("Back", skin);
         forgetPasswordButton = new TextButton("Forget Password", skin);
         buttonTable.add(loginButton).width(180).height(70).row();
         buttonTable.add(forgetPasswordButton).width(360).height(70).row();
+        buttonTable.add(backButton).width(180).height(70).row();
         mainTable.add(buttonTable).colspan(2).padTop(20).row();
         errorLabel = new Label("", skin);
         errorLabel.setColor(Color.RED);
@@ -65,7 +68,6 @@ public class LoginMenu implements Screen {
         errorLabel.setFontScale(0.8f);
         mainTable.add(errorLabel).colspan(2).pad(10);
         addListeners();
-
 
     }
 
@@ -99,8 +101,12 @@ public class LoginMenu implements Screen {
                 if (!controller.checkPassword(currentUser, password)) {
                     errorLabel.setText("Wrong Password");
                 }
-            }
 
+                stage.clear();
+                GameManager.setCurrentUser(currentUser);
+                ((Game) Gdx.app.getApplicationListener()).setScreen(Menu.MAIN_MENU.getScreen());
+
+            }
         });
 
         forgetPasswordButton.addListener(new ChangeListener() {
@@ -155,6 +161,12 @@ public class LoginMenu implements Screen {
                 }
             }
         });
+        backButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                ((Game) Gdx.app.getApplicationListener()).setScreen(Menu.OPENING_SCREEN.getScreen());
+            }
+        });
 
     }
 
@@ -189,5 +201,6 @@ public class LoginMenu implements Screen {
 
     @Override
     public void dispose() {
+        stage.dispose();
     }
 }

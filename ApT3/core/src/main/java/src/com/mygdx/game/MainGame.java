@@ -4,6 +4,7 @@ import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -19,11 +20,27 @@ public class MainGame extends Game {
     private SpriteBatch batch;
     private Texture image;
 
+    public static Music backgroundMusic;
+
     @Override
     public void create() {
         batch = new SpriteBatch();
         GameManager.setGame(this);
         setScreen(Menu.OPENING_SCREEN.getScreen());
+        playMusic(1);
+
+    }
+
+    public static void playMusic(int number) {
+        if (backgroundMusic != null) {
+            backgroundMusic.stop();
+            backgroundMusic.dispose();
+        }
+        backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("music/"+number+".mp3"));
+        GameManager.setMusic(backgroundMusic);
+        backgroundMusic.setLooping(true);
+        backgroundMusic.setVolume(0f);
+        backgroundMusic.play();
     }
 
     @Override

@@ -7,6 +7,7 @@ public class User {
     private String securityQNumber;
     private String securityAnswer;
     private int avatarNumber;
+    private int score = 0;
 
     public String getUsername() {
         return username;
@@ -59,5 +60,13 @@ public class User {
     public User(String username, String password) {
         this.username = username;
         this.password = password;
+    }
+
+    public int getScore() {
+        return score;
+    }
+
+    public void setScore(int score) {
+        this.score += score;
     }
 }
