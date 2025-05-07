@@ -8,11 +8,11 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import src.com.mygdx.game.Models.GameManager;
 
 import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import static src.com.mygdx.game.MainGame.backgroundMusic;
 
@@ -35,6 +35,8 @@ public class SettingMenu implements Screen {
     }
 
     private void createSetting() {
+        mainTable.clear();
+
         Label title = new Label("Settings", skin);
         title.setFontScale(1.5f);
         mainTable.add(title).center().padTop(50).padBottom(60).row();
@@ -45,9 +47,16 @@ public class SettingMenu implements Screen {
 
         volumeSlider = new Slider(0, 1, 0.01f, false, skin);
         volumeSlider.setValue(0.5f);
+
         Label volumeLabel = new Label("Volume", skin);
         mainTable.add(volumeLabel).padTop(50).left().row();
-        mainTable.add(volumeSlider).width(200).padTop(10).right();
+        mainTable.add(volumeSlider).width(200).padTop(10).row();
+
+        music1 = new TextButton("music 1", skin);
+        music2 = new TextButton("music 2", skin);
+
+        mainTable.add(music1).size(200, 60).padTop(20).center().row();
+        mainTable.add(music2).size(200, 60).padTop(-10).center().row();
 
         stage.addActor(mainTable);
     }
@@ -57,6 +66,19 @@ public class SettingMenu implements Screen {
             GameManager.setMusicVolume(volumeSlider.getValue());
             return true;
         });
+        music1.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                GameManager.changeMusic(1);
+            }
+        });
+        music2.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                GameManager.changeMusic(2);
+            }
+        });
+
     }
 
     @Override
@@ -65,7 +87,6 @@ public class SettingMenu implements Screen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         stage.act(delta);
         stage.draw();
-        System.out.println(volumeSlider.getValue());
         GameManager.setMusicVolume(volumeSlider.getValue());
     }
 
