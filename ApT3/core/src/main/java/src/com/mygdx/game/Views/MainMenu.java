@@ -100,6 +100,18 @@ public class MainMenu implements Screen {
                 ((Game) Gdx.app.getApplicationListener()).setScreen(Menu.SETTING_MENU.getScreen());
             }
         });
+
+        profileButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                if (GameManager.getCurrentUser().getUsername().equals("guest")) {
+                    // refuse
+                }
+                ((Game) Gdx.app.getApplicationListener()).setScreen(Menu.PROFILE_MENU.getScreen());
+            }
+        });
+
+
     }
 
     @Override

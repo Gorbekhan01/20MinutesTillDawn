@@ -29,6 +29,7 @@ public class LoginMenu implements Screen {
     private boolean first = true;
     Table buttonTable;
     private User currentUser;
+    TextField.TextFieldStyle textFieldStyle;
 
     @Override
     public void show() {
@@ -42,9 +43,15 @@ public class LoginMenu implements Screen {
         mainTable = new Table();
         mainTable.setFillParent(true);
         mainTable.defaults().pad(10);
+        textFieldStyle = new TextField.TextFieldStyle(skin.get(TextField.TextFieldStyle.class));
+        textFieldStyle.font = GameManager.getFont(2);
+
+
         Label titleLabel = new Label(">> Login Menu <<", skin);
         usernameField = new TextField("", skin);
+        usernameField.setStyle(textFieldStyle);
         passwordField = new TextField("", skin);
+        passwordField.setStyle(textFieldStyle);
         mainTable.add(titleLabel).colspan(2).padBottom(30).row();
         mainTable.add(new Label("Username", skin)).right();
         mainTable.add(usernameField).width(180).height(30).row();
@@ -136,6 +143,7 @@ public class LoginMenu implements Screen {
                     }
                     Label changePassword = new Label("Set a new Password", skin);
                     newPasswordField = new TextField("", skin);
+                    newPasswordField.setStyle(textFieldStyle);
 
                     buttonTable.add(changePassword).padTop(15).center().row();
                     changePassword.setFontScale(0.8f);

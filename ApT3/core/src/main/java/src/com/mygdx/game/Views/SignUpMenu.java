@@ -46,6 +46,8 @@ public class SignUpMenu implements Screen {
         mainTable = new Table();
         mainTable.setFillParent(true);
         mainTable.defaults().pad(10);
+        TextField.TextFieldStyle textFieldStyle = new TextField.TextFieldStyle(skin.get(TextField.TextFieldStyle.class));
+        textFieldStyle.font = GameManager.getFont(2);
 
         // Title
         Label titleLabel = new Label(">> SignUp Menu <<", skin);
@@ -62,7 +64,9 @@ public class SignUpMenu implements Screen {
 
         // Form Fields
         usernameField = new TextField("", skin);
+        usernameField.setStyle(textFieldStyle);
         passwordField = new TextField("", skin);
+        passwordField.setStyle(textFieldStyle);
         passwordField.setPasswordMode(true);
         passwordField.setPasswordCharacter('*');
         confirmPasswordField = new TextField("", skin);
@@ -71,6 +75,7 @@ public class SignUpMenu implements Screen {
         securityQuestionSelect = new SelectBox<>(skin);
         securityQuestionSelect.setItems(GameManager.getSecurityQs());
         securityAnswerField = new TextField("", skin);
+        securityAnswerField.setStyle(textFieldStyle);
 
         mainTable.add(new Label("Username", skin)).right();
         mainTable.add(usernameField).width(180).height(30).row();

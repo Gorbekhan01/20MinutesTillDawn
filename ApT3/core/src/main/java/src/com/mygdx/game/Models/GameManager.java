@@ -3,6 +3,9 @@ package src.com.mygdx.game.Models;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import src.com.mygdx.game.MainGame;
 import src.com.mygdx.game.Views.MainMenu;
@@ -21,6 +24,7 @@ public class GameManager {
         game = mainGame;
     }
     private static Music currentMusic;
+    private static boolean SFX = true;
 
     public static MainGame getGame() {
         return game;
@@ -80,4 +84,35 @@ public class GameManager {
         MainGame.playMusic(number);
     }
 
+    public static boolean isSFX() {
+        return SFX;
+    }
+
+    public static void setSFX(boolean SFX) {
+        SFX = SFX;
+    }
+
+    public static BitmapFont getFont(int number) {
+        FreeTypeFontGenerator generator;
+        FreeTypeFontGenerator.FreeTypeFontParameter parameter;
+        BitmapFont customFont;
+        switch (number){
+            case 1:
+                generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/ChevyRay - Express.ttf"));
+                parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+                parameter.size = 20;
+                customFont = generator.generateFont(parameter);
+                generator.dispose();
+                return customFont;
+            case 2:
+                generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/NotoSans-Regular.ttf"));
+                parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+                parameter.size = 20;
+                customFont = generator.generateFont(parameter);
+                generator.dispose();
+                return customFont;
+
+        }
+        return null;
+    }
 }

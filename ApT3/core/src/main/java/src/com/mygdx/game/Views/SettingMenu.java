@@ -1,5 +1,6 @@
 package src.com.mygdx.game.Views;
 
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
@@ -11,6 +12,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import src.com.mygdx.game.Models.GameManager;
+import src.com.mygdx.game.Models.Menu;
 
 import javax.swing.event.ChangeEvent;
 
@@ -18,7 +20,8 @@ import static src.com.mygdx.game.MainGame.backgroundMusic;
 
 public class SettingMenu implements Screen {
     private Slider volumeSlider;
-    private TextButton music1 , music2;
+    private TextButton music1 , music2 , backButton;
+    private CheckBox checkBox;
     private Table mainTable;
     private Stage stage;
     private Skin skin = GameManager.getSkin();
@@ -57,6 +60,13 @@ public class SettingMenu implements Screen {
 
         mainTable.add(music1).size(200, 60).padTop(20).center().row();
         mainTable.add(music2).size(200, 60).padTop(-10).center().row();
+        checkBox = new CheckBox("  SFX sound ON", skin);
+        mainTable.add(checkBox).width(200).padTop(20).row();
+        backButton = new TextButton("back", skin);
+        mainTable.add(backButton).width(200).padTop(20).row();
+
+
+        // -- > keyboard customization
 
         stage.addActor(mainTable);
     }
@@ -76,6 +86,22 @@ public class SettingMenu implements Screen {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 GameManager.changeMusic(2);
+            }
+        });
+        checkBox.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                if (checkBox.isChecked()) {
+                    GameManager.setSFX(true);
+                } else {
+                    GameManager.setSFX(false);
+                }
+            }
+        });
+        backButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                ((Game) Gdx.app.getApplicationListener()).setScreen(Menu.MAIN_MENU.getScreen());
             }
         });
 
