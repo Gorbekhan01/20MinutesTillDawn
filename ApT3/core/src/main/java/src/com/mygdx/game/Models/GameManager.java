@@ -15,14 +15,18 @@ import java.util.List;
 
 public class GameManager {
     private static MainGame game;
-    private static final Skin skin = new Skin(Gdx.files.internal("Skin/star-soldier-ui.json"));;
+    private static final Skin skin = new Skin(Gdx.files.internal("Skin/star-soldier-ui.json"));
+    ;
     private static Screen screen;
     private static User currentUser = null;
     private static Menu currentMenu = Menu.OPENING_SCREEN;
     private static final ArrayList<User> users = new ArrayList<>();
+    private static NewGame newGame;
+
     public static void setGame(MainGame mainGame) {
         game = mainGame;
     }
+
     private static Music currentMusic;
     private static boolean SFX = true;
 
@@ -57,11 +61,29 @@ public class GameManager {
     }
 
     private static final ArrayList<String> avatars = new ArrayList<>(
-        List.of("avatars/1.png", "avatars/2.png", "avatars/3.png", "avatars/4.png")
+        List.of("avatars/1.png", "avatars/2.png", "avatars/3.png", "avatars/4.png"
+            , "avatars/5.png", "avatars/6.png", "avatars/7.png", "avatars/8.png",
+            "avatars/9.png", "avatars/10.png", "avatars/11.png")
+    );
+
+    private static final ArrayList<String> heroes = new ArrayList<>(
+        List.of("heroes/Dasher.png","heroes/Diamond.png","heroes/Lilith.png","heroes/Scarlet.png","heroes/Shana.png")
+    );
+
+    private static final ArrayList<String> weapons = new ArrayList<>(
+        List.of("weapons/DualSMGs.png","weapons/Revolver.png","weapons/Shotgun.png")
     );
 
     public static ArrayList<String> getAvatars() {
         return avatars;
+    }
+
+    public static ArrayList<String> getHeroes() {
+        return heroes;
+    }
+
+    public static ArrayList<String> getWeapons() {
+        return weapons;
     }
 
     public static User getCurrentUser() {
@@ -96,7 +118,7 @@ public class GameManager {
         FreeTypeFontGenerator generator;
         FreeTypeFontGenerator.FreeTypeFontParameter parameter;
         BitmapFont customFont;
-        switch (number){
+        switch (number) {
             case 1:
                 generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/ChevyRay - Express.ttf"));
                 parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
@@ -115,4 +137,14 @@ public class GameManager {
         }
         return null;
     }
+
+    public static void setNewGame(NewGame newGame) {
+        newGame = newGame;
+    }
+
+    public static NewGame getNewGame() {
+        return newGame;
+    }
+
+
 }

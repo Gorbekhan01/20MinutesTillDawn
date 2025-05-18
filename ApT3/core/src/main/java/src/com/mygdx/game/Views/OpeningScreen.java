@@ -24,7 +24,7 @@ public class OpeningScreen implements Screen {
     private boolean animationFinished = false;
     private boolean buttonsCreated = false;
     private Table mainTable = new Table();
-    Texture texture = new Texture(Gdx.files.internal("Logo.png"));
+    Texture texture = new Texture(Gdx.files.internal("T_20Logo.png"));
     Image image = new Image(texture);
 
     @Override

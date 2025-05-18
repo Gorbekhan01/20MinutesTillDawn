@@ -101,6 +101,13 @@ public class MainMenu implements Screen {
             }
         });
 
+        preGameButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                ((Game) Gdx.app.getApplicationListener()).setScreen(Menu.PREGAME_MENU.getScreen());
+            }
+        });
+
         profileButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {

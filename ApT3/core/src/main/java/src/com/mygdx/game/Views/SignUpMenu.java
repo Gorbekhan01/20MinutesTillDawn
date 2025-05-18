@@ -129,13 +129,13 @@ public class SignUpMenu implements Screen {
                     errorLabel.setText(usernameError);
                     return;
                 }
-                user.setUsername(username);
 
                 String passwordError = signUpController.checkPasswordStrength(password);
                 if (passwordError != null) {
                     errorLabel.setText(passwordError);
                     return;
                 }
+                user.setUsername(username);
                 user.setPassword(password);
                 user.setSecurityQNumber(securityQuestion);
                 user.setSecurityAnswer(securityAnswer);
@@ -173,7 +173,7 @@ public class SignUpMenu implements Screen {
 
     private void updateAvatar() {
         Random random = new Random();
-        int randomInt = random.nextInt(3);
+        int randomInt = random.nextInt(11);
         Texture avatarTexture = new Texture(Gdx.files.internal(GameManager.getAvatars().get(randomInt)));
         avatarImage.setDrawable(new Image(avatarTexture).getDrawable());
         user.setAvatarNumber(randomInt);
