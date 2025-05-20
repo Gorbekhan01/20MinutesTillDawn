@@ -10,11 +10,9 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.Align;
+import src.com.mygdx.game.Models.*;
 import src.com.mygdx.game.Models.Enums.Heroes;
 import src.com.mygdx.game.Models.Enums.Weapons;
-import src.com.mygdx.game.Models.GameManager;
-import src.com.mygdx.game.Models.Menu;
-import src.com.mygdx.game.Models.NewGame;
 
 
 public class PreGameMenu implements Screen {
@@ -24,11 +22,14 @@ public class PreGameMenu implements Screen {
     private Table mainTable;
     private Label characterName, weaponName , timeName;
     private TextButton nextCBotton, prevCBotton, nextWBotton, prevWBotton, nextTBotton, prevTBotton , start , back;
+    private TextField rightKey , leftKey, upKey, downKey , shootKey;
+    private int rightInt=0 , leftInt=0 , upInt=0 , downInt=0 , shootInt =0;
     private Image character, weapon;
     private int characterCounter = 0;
     private int weaponCounter = 0;
     private int timeCounter = 0;
     private double time = 0;
+    private Weapons weaponType;
 
 
     @Override
@@ -61,7 +62,7 @@ public class PreGameMenu implements Screen {
         charactersTable.add(prevCBotton).size(80, 80).padRight(10);
         charactersTable.add(character).size(80, 100);
         charactersTable.add(nextCBotton).size(80, 80).padLeft(10).row();
-        charactersTable.add(characterName).colspan(3).center().padTop(10).padBottom(20).row();
+        charactersTable.add(characterName).colspan(3).center().padTop(10).padBottom(10).row();
 
 
         // Weapons Table
@@ -78,8 +79,8 @@ public class PreGameMenu implements Screen {
         weaponTable.add(weapon).size(80, 100);
         weaponTable.add(nextWBotton).size(80, 80).padLeft(10).row();
         weaponTable.add(weaponName).colspan(3).center().padTop(10).row();
-        mainTable.add(charactersTable).width(stage.getWidth() * 0.8f).center().row();
-        mainTable.add(weaponTable).width(stage.getWidth() * 0.8f).center().padTop(20).row();
+        mainTable.add(charactersTable).width(stage.getWidth() * 0.8f).left().row();
+        mainTable.add(weaponTable).width(stage.getWidth() * 0.8f).right().row();
 
 
         Table timeTable = new Table();
@@ -93,7 +94,45 @@ public class PreGameMenu implements Screen {
         timeTable.add(prevTBotton).size(80, 80).padRight(10);
         timeTable.add(timeName).size(80, 80);
         timeTable.add(nextTBotton).size(80, 80).padLeft(10).row();
-        mainTable.add(timeTable).width(stage.getWidth() * 0.8f).padTop(20).center().row();
+        mainTable.add(timeTable).width(stage.getWidth() * 0.8f).padTop(10).center().row();
+
+        Label keyboardLabel = new Label("Keyboard settings", skin);
+        Table keyboardTable = new Table();
+        keyboardLabel.setAlignment(Align.center);
+        keyboardTable.add(keyboardLabel).colspan(3).center().padTop(20).padBottom(10).row();
+
+        Label rightKeyLabel = new Label("Right", skin);
+        rightKeyLabel.setFontScale(0.8f);
+        keyboardTable.add(rightKeyLabel).padRight(5);
+        rightKey = new TextField("", skin);
+        keyboardTable.add(rightKey).size(80, 40).padRight(10);
+
+        Label leftKeyLabel = new Label("Left", skin);
+        leftKeyLabel.setFontScale(0.8f);
+        keyboardTable.add(leftKeyLabel).padRight(5);
+        leftKey = new TextField("", skin);
+        keyboardTable.add(leftKey).size(80, 40).padRight(10);
+
+        Label upKeyLabel = new Label("Up", skin);
+        upKeyLabel.setFontScale(0.8f);
+        keyboardTable.add(upKeyLabel).padRight(5);
+        upKey = new TextField("", skin);
+        keyboardTable.add(upKey).size(80, 40).padRight(10);
+
+        Label downKeyLabel = new Label("Down", skin);
+        downKeyLabel.setFontScale(0.8f);
+        keyboardTable.add(downKeyLabel).padRight(5);
+        downKey = new TextField("", skin);
+        keyboardTable.add(downKey).size(80, 40).padRight(10);
+
+        Label shootKeyLabel = new Label("Shoot", skin);
+        shootKeyLabel.setFontScale(0.8f);
+        keyboardTable.add(shootKeyLabel).padRight(5);
+        shootKey = new TextField("", skin);
+        keyboardTable.add(shootKey).size(80, 40);
+
+        mainTable.add(keyboardTable).width(stage.getWidth() * 0.8f).padTop(20).center().row();
+
 
         start = new TextButton("Start", skin);
         mainTable.add(start).width(200).padTop(20).center().row();
@@ -184,7 +223,16 @@ public class PreGameMenu implements Screen {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 NewGame newGame = new NewGame(time,GameManager.getCurrentUser().getPlayer());
+                if (upInt!=0) newGame.setUpKey(upInt);
+                if (downInt!=0) newGame.setDownKey(downInt);
+                if (rightInt!=0) newGame.setRightKey(rightInt);
+                if (leftInt!=0) newGame.setLeftKey(leftInt);
+                if (shootInt!=0) newGame.setShootKey(shootInt);
+
                 GameManager.setNewGame(newGame);
+                Weapon weapon1 = new Weapon(weaponType);
+                newGame.getPlayer().setWeapons(weapon1);
+                GameManager.getNewGame().getPlayer().initializePlayer();
                 ((Game) Gdx.app.getApplicationListener()).setScreen(Menu.MAIN_GAME_SCREEN.getScreen());
             }
 
@@ -198,6 +246,75 @@ public class PreGameMenu implements Screen {
 
         });
 
+        leftKey.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                String down = leftKey.getText();
+                if (!down.isEmpty()) {
+                    for (Pair<String, Integer> pair : GameManager.getKeys()) {
+                        if (pair.getFirst().equals(down)) {
+                            leftInt = pair.getSecond()-68;
+                        }
+                    }
+                }
+            }
+        });
+
+        rightKey.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                String key = rightKey.getText();
+                if (!key.isEmpty()) {
+                    for (Pair<String, Integer> pair : GameManager.getKeys()) {
+                        if (pair.getFirst().equals(key)) {
+                            rightInt = pair.getSecond()-68;
+                        }
+                    }
+                }
+            }
+        });
+
+        upKey.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                String key = upKey.getText();
+                if (!key.isEmpty()) {
+                    for (Pair<String, Integer> pair : GameManager.getKeys()) {
+                        if (pair.getFirst().equals(key)) {
+                            upInt = pair.getSecond()-68;
+                        }
+                    }
+                }
+            }
+        });
+
+        downKey.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                String key = downKey.getText();
+                if (!key.isEmpty()) {
+                    for (Pair<String, Integer> pair : GameManager.getKeys()) {
+                        if (pair.getFirst().equals(key)) {
+                            downInt = pair.getSecond()-68;
+                        }
+                    }
+                }
+            }
+        });
+
+        shootKey.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                String key = shootKey.getText();
+                if (!key.isEmpty()) {
+                    for (Pair<String, Integer> pair : GameManager.getKeys()) {
+                        if (pair.getFirst().equals(key)) {
+                            shootInt = pair.getSecond()-68;
+                        }
+                    }
+                }
+            }
+        });
 
     }
 
@@ -235,15 +352,15 @@ public class PreGameMenu implements Screen {
         weapon.setDrawable(new Image(avatarTexture).getDrawable());
         switch (weaponCounter) {
             case 0:
-                GameManager.getCurrentUser().getPlayer().setWeapons(Weapons.DUAL_SMGs);
+                weaponType = Weapons.DUAL_SMGs;
                 weaponName.setText("Dual SMGs");
                 break;
             case 1:
-                GameManager.getCurrentUser().getPlayer().setWeapons(Weapons.REVOLVER);
+                weaponType = Weapons.REVOLVER;
                 weaponName.setText("Revolver");
                 break;
             case 2:
-                GameManager.getCurrentUser().getPlayer().setWeapons(Weapons.SHOTGUN);
+                weaponType = Weapons.SHOTGUN;
                 weaponName.setText("Shotgun");
                 break;
         }

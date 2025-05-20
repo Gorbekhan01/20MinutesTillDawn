@@ -6,6 +6,7 @@ import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import src.com.mygdx.game.MainGame;
 import src.com.mygdx.game.Views.MainMenu;
@@ -16,12 +17,25 @@ import java.util.List;
 public class GameManager {
     private static MainGame game;
     private static final Skin skin = new Skin(Gdx.files.internal("Skin/star-soldier-ui.json"));
-    ;
     private static Screen screen;
     private static User currentUser = null;
     private static Menu currentMenu = Menu.OPENING_SCREEN;
     private static final ArrayList<User> users = new ArrayList<>();
     private static NewGame newGame;
+    private static ArrayList<Pair<String, Integer>> keys = new ArrayList<>(
+        List.of(
+            new Pair<>("a", (int) 'a'), new Pair<>("b", (int) 'b'), new Pair<>("c", (int) 'c'),
+            new Pair<>("d", (int) 'd'), new Pair<>("e", (int) 'e'), new Pair<>("f", (int) 'f'),
+            new Pair<>("g", (int) 'g'), new Pair<>("h", (int) 'h'), new Pair<>("i", (int) 'i'),
+            new Pair<>("j", (int) 'j'), new Pair<>("k", (int) 'k'), new Pair<>("l", (int) 'l'),
+            new Pair<>("m", (int) 'm'), new Pair<>("n", (int) 'n'), new Pair<>("o", (int) 'o'),
+            new Pair<>("p", (int) 'p'), new Pair<>("q", (int) 'q'), new Pair<>("r", (int) 'r'),
+            new Pair<>("s", (int) 's'), new Pair<>("t", (int) 't'), new Pair<>("u", (int) 'u'),
+            new Pair<>("v", (int) 'v'), new Pair<>("w", (int) 'w'), new Pair<>("x", (int) 'x'),
+            new Pair<>("y", (int) 'y'), new Pair<>("z", (int) 'z')
+        )
+    );
+
 
     public static void setGame(MainGame mainGame) {
         game = mainGame;
@@ -67,7 +81,8 @@ public class GameManager {
     );
 
     private static final ArrayList<String> heroes = new ArrayList<>(
-        List.of("heroes/Dasher.png","heroes/Diamond.png","heroes/Lilith.png","heroes/Scarlet.png","heroes/Shana.png")
+        List.of("heroes/Dasher/Walk_0.png", "heroes/Diamond/Walk_0.png", "heroes/Lilith/Walk_0.png", "heroes/Scarlet/Walk_0.png"
+            , "heroes/Shana/Walk_0.png")
     );
 
     private static final ArrayList<String> weapons = new ArrayList<>(
@@ -111,7 +126,7 @@ public class GameManager {
     }
 
     public static void setSFX(boolean SFX) {
-        SFX = SFX;
+        GameManager.SFX = SFX;
     }
 
     public static BitmapFont getFont(int number) {
@@ -139,12 +154,14 @@ public class GameManager {
     }
 
     public static void setNewGame(NewGame newGame) {
-        newGame = newGame;
+        GameManager.newGame = newGame;
     }
 
     public static NewGame getNewGame() {
         return newGame;
     }
 
-
+    public static ArrayList<Pair<String, Integer>> getKeys() {
+        return keys;
+    }
 }

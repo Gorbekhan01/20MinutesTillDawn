@@ -2,7 +2,7 @@ package src.com.mygdx.game.Models.Enums;
 
 public enum Weapons {
     DUAL_SMGs(6,1,1,20,"weapons/DualSMGs.png"),
-    REVOLVER(2,1,4,10,"weapons/Revolver.png.png"),
+    REVOLVER(2,1,4,10,"weapons/Revolver.png"),
     SHOTGUN(24,2,1,8,"weapons/Shotgun.png");
 
 
