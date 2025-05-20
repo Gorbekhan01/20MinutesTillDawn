@@ -14,7 +14,8 @@ public enum Menu {
     SETTING_MENU(new SettingMenu()),
     PAUSE_MENU(new PauseMenu()),
     MAIN_GAME_SCREEN(new MainGameScreen()),
-    OPENING_SCREEN(new OpeningScreen());
+    OPENING_SCREEN(new OpeningScreen()),
+    GAME_OVER(new GameOver());
 
     private Screen screen;
 

@@ -1,9 +1,6 @@
 package src.com.mygdx.game.Views;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
-import com.badlogic.gdx.InputProcessor;
-import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -13,7 +10,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import src.com.mygdx.game.Models.Enemies.Tree;
 import src.com.mygdx.game.Models.GameManager;
+import src.com.mygdx.game.Models.Menu;
 import src.com.mygdx.game.Models.Player;
 
 import java.util.ArrayList;
@@ -30,13 +29,14 @@ public class MainGameScreen implements Screen {
     private Set<Integer> pressedKeys = new HashSet<>();
     private Label xpLabel, levelLabel;
     private ArrayList<Image> heartImages = new ArrayList<>();
+    private ArrayList<Tree> trees = new ArrayList<>();
 
 
     @Override
     public void show() {
         camera = new OrthographicCamera();
         camera.setToOrtho(false, 800, 600);
-        camera.zoom = 0.3f;
+        camera.zoom = 0.35f;
         viewport = new ScreenViewport(camera);
         stage = new Stage(viewport);
         GameManager.getNewGame().setGameStage(stage);
@@ -63,9 +63,32 @@ public class MainGameScreen implements Screen {
         xpLabel.setPosition(280, Gdx.graphics.getHeight() - 50);
         levelLabel = new Label("Level: " + player.getXP(), new Label.LabelStyle(GameManager.getFont(1), Color.WHITE));
         levelLabel.setPosition(400, Gdx.graphics.getHeight() - 50);
-
         fixedStage.addActor(xpLabel);
         fixedStage.addActor(levelLabel);
+
+        // Trees
+        int treeCount = (int) (Math.random()*20);
+        for (int i = 0; i < treeCount; i++) {
+            int x = (int) (Math.random()*Gdx.graphics.getWidth()-100);
+            int y = (int) (Math.random()*Gdx.graphics.getHeight()-100);
+            boolean accepted = true;
+            Tree tree = new Tree(x, y);
+            for (Tree t : trees) {
+                if (tree.getBox().overlaps(t.getBox())) {
+                    accepted = false;
+                    break;
+                }
+            }
+            if (accepted) {
+                trees.add(tree);
+                Texture texture = new Texture(tree.getImage());
+                Image image = new Image(texture);
+                image.setPosition(x, y);
+                stage.addActor(image);
+                System.out.println("Tree " + tree.getBox().getX() + " " + tree.getBox().getY());
+            }
+        }
+
 
         stage.addActor(player.getPlayerImage());
 
@@ -152,6 +175,21 @@ public class MainGameScreen implements Screen {
             heart.remove();
         }
         heartImages.clear();
+
+        if (!player.isDamaged()) {
+            for (Tree tree : trees) {
+                if (player.getBox().overlaps(tree.getBox())) {
+                    player.setHP();
+                    player.setDamaged(true);
+                    player.setInvincibleTimer(1f);
+                    if (player.getHP() <= 0) {
+                        ((Game) Gdx.app.getApplicationListener()).setScreen(Menu.GAME_OVER.getScreen());
+                    }
+                }
+            }
+        }
+
+
         int lastInt = 0;
 
         for (int i = 1; i <= player.getHP(); i++) {
@@ -172,6 +210,7 @@ public class MainGameScreen implements Screen {
                 heartImages.add(image);
             }
         }
+
 
         xpLabel = new Label("XP: " + player.getXP(), new Label.LabelStyle(GameManager.getFont(1), Color.WHITE));
         xpLabel.setPosition(280, Gdx.graphics.getHeight() - 50);
@@ -214,5 +253,6 @@ public class MainGameScreen implements Screen {
     public void dispose() {
         stage.dispose();
         backgroundTexture.dispose();
+        fixedStage.dispose();
     }
 }

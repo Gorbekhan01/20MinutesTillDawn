@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
@@ -23,8 +24,9 @@ public class Player {
     private int HP;
     private int level = 0;
     private int XP = 0;
-
-
+    private Rectangle box;
+    private float invincibleTimer = 0;
+    private boolean damaged = false;
 
     public void initializePlayer() {
         walkFrames = new Texture[hero.getImages().length];
@@ -43,49 +45,51 @@ public class Player {
         velocity = new Vector2(0, 0);
 
         playerImage = new Image(new TextureRegionDrawable(regions[0]));
+        playerImage.setSize(15,20);
         playerImage.setPosition(position.x, position.y);
+        box = new Rectangle(position.x, position.y, playerImage.getImageWidth(), playerImage.getImageHeight());
 
     }
 
     public void moveLeft() {
-        velocity.set(-50 * hero.getSpeed(), 0);
+        velocity.set(-40 * hero.getSpeed(), 0);
         isMoving = true;
         playerImage.setScale(-1, 1);
     }
 
     public void moveRight() {
-        velocity.set(50 * hero.getSpeed(), 0);
+        velocity.set(40 * hero.getSpeed(), 0);
         isMoving = true;
         playerImage.setScale(1, 1);
     }
 
     public void moveUp() {
-        velocity.set(0, 50 * hero.getSpeed());
+        velocity.set(0, 40 * hero.getSpeed());
         isMoving = true;
     }
 
     public void moveDown() {
-        velocity.set(0, -50 * hero.getSpeed());
+        velocity.set(0, -40 * hero.getSpeed());
         isMoving = true;
     }
 
     public void moveUpRight() {
-        velocity.set(25 * hero.getSpeed(), 25 * hero.getSpeed());
+        velocity.set(20 * hero.getSpeed(), 20 * hero.getSpeed());
         isMoving = true;
     }
 
     public void moveUpLeft() {
-        velocity.set(-25 * hero.getSpeed(), 25 * hero.getSpeed());
+        velocity.set(-20 * hero.getSpeed(), 20 * hero.getSpeed());
         isMoving = true;
     }
 
     public void moveDownRight() {
-        velocity.set(25 * hero.getSpeed(), -25 * hero.getSpeed());
+        velocity.set(20 * hero.getSpeed(), -20 * hero.getSpeed());
         isMoving = true;
     }
 
     public void moveDownLeft() {
-        velocity.set(-100 * hero.getSpeed(), -100 * hero.getSpeed());
+        velocity.set(-20 * hero.getSpeed(), -20 * hero.getSpeed());
         isMoving = true;
     }
 
@@ -106,11 +110,22 @@ public class Player {
             position.y = Gdx.graphics.getHeight() - playerImage.getHeight();
 
         playerImage.setPosition(position.x, position.y);
+        box.setPosition(position.x, position.y);
         weapon.update(position);
+
+        if (damaged) {
+            invincibleTimer -= delta;
+            playerImage.setColor(1, 1, 1, 0.5f);
+            if (invincibleTimer <= 0) {
+                damaged = false;
+                playerImage.setColor(1, 1, 1, 1f);
+            }
+        }
 
         if (isMoving) {
             playerImage.setDrawable(new TextureRegionDrawable(walkAnimation.getKeyFrame(stateTime, true)));
         }
+
     }
 
 
@@ -172,6 +187,26 @@ public class Player {
 
     public void setXP(int value) {
         XP += value;
+    }
+
+    public Rectangle getBox() {
+        return box;
+    }
+
+    public float getInvincibleTimer() {
+        return invincibleTimer;
+    }
+
+    public void setInvincibleTimer(float invincibleTimer) {
+        this.invincibleTimer = invincibleTimer;
+    }
+
+    public boolean isDamaged() {
+        return damaged;
+    }
+
+    public void setDamaged(boolean damaged) {
+        this.damaged = damaged;
     }
 }
 
