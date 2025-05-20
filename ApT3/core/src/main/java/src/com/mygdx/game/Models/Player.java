@@ -18,8 +18,11 @@ public class Player {
     private float stateTime;
     private boolean isMoving;
     private Texture[] walkFrames;
-    private Heroes hero;
-    private Weapon weapon;
+    private Heroes hero = Heroes.DASHER;
+    private Weapon weapon = null;
+    private int HP;
+    private int level = 0;
+    private int XP = 0;
 
 
 
@@ -45,44 +48,44 @@ public class Player {
     }
 
     public void moveLeft() {
-        velocity.set(-200, 0);
+        velocity.set(-50 * hero.getSpeed(), 0);
         isMoving = true;
         playerImage.setScale(-1, 1);
     }
 
     public void moveRight() {
-        velocity.set(200, 0);
+        velocity.set(50 * hero.getSpeed(), 0);
         isMoving = true;
         playerImage.setScale(1, 1);
     }
 
     public void moveUp() {
-        velocity.set(0, 200);
+        velocity.set(0, 50 * hero.getSpeed());
         isMoving = true;
     }
 
     public void moveDown() {
-        velocity.set(0, -200);
+        velocity.set(0, -50 * hero.getSpeed());
         isMoving = true;
     }
 
     public void moveUpRight() {
-        velocity.set(100, 100);
+        velocity.set(25 * hero.getSpeed(), 25 * hero.getSpeed());
         isMoving = true;
     }
 
     public void moveUpLeft() {
-        velocity.set(-100, 100);
+        velocity.set(-25 * hero.getSpeed(), 25 * hero.getSpeed());
         isMoving = true;
     }
 
     public void moveDownRight() {
-        velocity.set(100, -100);
+        velocity.set(25 * hero.getSpeed(), -25 * hero.getSpeed());
         isMoving = true;
     }
 
     public void moveDownLeft() {
-        velocity.set(-100, -100);
+        velocity.set(-100 * hero.getSpeed(), -100 * hero.getSpeed());
         isMoving = true;
     }
 
@@ -112,7 +115,7 @@ public class Player {
 
 
     public void shoot() {
-        Vector2 bulletDirection = new Vector2((float)   Math.cos(Math.toRadians(weapon.getWeaponImage().getRotation())),
+        Vector2 bulletDirection = new Vector2((float) Math.cos(Math.toRadians(weapon.getWeaponImage().getRotation())),
             (float) Math.sin(Math.toRadians(weapon.getWeaponImage().getRotation())));
 
         Bullet bullet = new Bullet(new Vector2(position.x, position.y), bulletDirection);
@@ -144,6 +147,31 @@ public class Player {
 
     public void setHero(Heroes hero) {
         this.hero = hero;
+        HP = hero.getHP();
+    }
+
+    public int getHP() {
+        return HP;
+    }
+
+    public void setHP() {
+        HP--;
+    }
+
+    public int getLevel() {
+        return level;
+    }
+
+    public void setLevel() {
+        level++;
+    }
+
+    public int getXP() {
+        return XP;
+    }
+
+    public void setXP(int value) {
+        XP += value;
     }
 }
 
