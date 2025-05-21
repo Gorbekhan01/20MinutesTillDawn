@@ -2,6 +2,7 @@ package src.com.mygdx.game.Models;
 
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import src.com.mygdx.game.Models.Enemies.TentacleMonster;
 
 import java.util.ArrayList;
 
@@ -15,6 +16,8 @@ public class NewGame {
     private int upKey = 51;
     private int downKey = 47;
     private int shootKey = 62;
+    private ArrayList<TentacleMonster> tentacleMonsters = new ArrayList<>();
+    private ArrayList<Point> points = new ArrayList<>();
 
     public NewGame(double time, Player player) {
         this.time = time;
@@ -24,6 +27,7 @@ public class NewGame {
     public double getTime() {
         return time;
     }
+
     public Player getPlayer() {
         return player;
     }
@@ -79,4 +83,13 @@ public class NewGame {
     public void setShootKey(int shootKey) {
         this.shootKey = shootKey;
     }
+
+    public ArrayList<TentacleMonster> getTentacleMonsters() {
+        return tentacleMonsters;
+    }
+
+    public ArrayList<Point> getPoints() {
+        return points;
+    }
+
 }

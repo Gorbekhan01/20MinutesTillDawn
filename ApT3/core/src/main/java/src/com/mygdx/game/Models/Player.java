@@ -4,10 +4,12 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import src.com.mygdx.game.Models.Enemies.TentacleMonster;
 import src.com.mygdx.game.Models.Enums.Heroes;
 import src.com.mygdx.game.Models.Enums.Weapons;
 
@@ -113,6 +115,15 @@ public class Player {
         box.setPosition(position.x, position.y);
         weapon.update(position);
 
+        for (Point point  : GameManager.getNewGame().getPoints()) {
+            if (Intersector.overlaps(box, point.getBox())) {
+                point.setVisible(true);
+                setXP(3);
+                point.getImageBox().remove();
+                break;
+            }
+        }
+
         if (damaged) {
             invincibleTimer -= delta;
             playerImage.setColor(1, 1, 1, 0.5f);
@@ -207,6 +218,10 @@ public class Player {
 
     public void setDamaged(boolean damaged) {
         this.damaged = damaged;
+    }
+
+    public Vector2 getPosition() {
+        return position;
     }
 }
 

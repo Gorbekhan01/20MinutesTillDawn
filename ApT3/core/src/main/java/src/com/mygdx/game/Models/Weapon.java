@@ -14,6 +14,7 @@ public class Weapon {
     private Texture weaponTexture;
     private Weapons weapon;
     private Stage stage;
+    private int damage;
 
     public Weapon(Weapons weapons) {
         this.weapon = weapons;
@@ -21,6 +22,7 @@ public class Weapon {
         weaponImage = new Image(weaponTexture);
         position = new Vector2(0, 0);
         weaponImage.setPosition(position.x, position.y);
+        damage = weapons.getDamage();
     }
 
     public void initiate(){
@@ -55,5 +57,13 @@ public class Weapon {
 
     public void setWeapon(Weapons weapon) {
         this.weapon = weapon;
+    }
+
+    public int getDamage() {
+        return damage;
+    }
+
+    public void setDamage(int damage) {
+        this.damage = damage;
     }
 }

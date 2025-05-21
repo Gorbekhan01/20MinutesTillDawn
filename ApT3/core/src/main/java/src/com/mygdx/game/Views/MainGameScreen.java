@@ -10,10 +10,12 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import src.com.mygdx.game.Models.Enemies.TentacleMonster;
 import src.com.mygdx.game.Models.Enemies.Tree;
 import src.com.mygdx.game.Models.GameManager;
 import src.com.mygdx.game.Models.Menu;
 import src.com.mygdx.game.Models.Player;
+import src.com.mygdx.game.Models.Point;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -27,9 +29,12 @@ public class MainGameScreen implements Screen {
     private Image backgroundImage;
     private Player player;
     private Set<Integer> pressedKeys = new HashSet<>();
-    private Label xpLabel, levelLabel;
+    private Label xpLabel, levelLabel, timeLabel;
     private ArrayList<Image> heartImages = new ArrayList<>();
     private ArrayList<Tree> trees = new ArrayList<>();
+    private double time;
+    private float timeAccumulator = 0;
+    private int passedTime = 0;
 
 
     @Override
@@ -37,6 +42,7 @@ public class MainGameScreen implements Screen {
         camera = new OrthographicCamera();
         camera.setToOrtho(false, 800, 600);
         camera.zoom = 0.35f;
+        time = GameManager.getNewGame().getTime() * 60;
         viewport = new ScreenViewport(camera);
         stage = new Stage(viewport);
         GameManager.getNewGame().setGameStage(stage);
@@ -63,14 +69,17 @@ public class MainGameScreen implements Screen {
         xpLabel.setPosition(280, Gdx.graphics.getHeight() - 50);
         levelLabel = new Label("Level: " + player.getXP(), new Label.LabelStyle(GameManager.getFont(1), Color.WHITE));
         levelLabel.setPosition(400, Gdx.graphics.getHeight() - 50);
+        timeLabel = new Label((int) time / 60 + ":" + time % 60, new Label.LabelStyle(GameManager.getFont(1), Color.WHITE));
+        timeLabel.setPosition(600, Gdx.graphics.getHeight() - 50);
         fixedStage.addActor(xpLabel);
         fixedStage.addActor(levelLabel);
+        fixedStage.addActor(timeLabel);
 
         // Trees
-        int treeCount = (int) (Math.random()*20);
+        int treeCount = (int) (Math.random() * 20);
         for (int i = 0; i < treeCount; i++) {
-            int x = (int) (Math.random()*Gdx.graphics.getWidth()-100);
-            int y = (int) (Math.random()*Gdx.graphics.getHeight()-100);
+            int x = (int) (Math.random() * Gdx.graphics.getWidth() - 100);
+            int y = (int) (Math.random() * Gdx.graphics.getHeight() - 100);
             boolean accepted = true;
             Tree tree = new Tree(x, y);
             for (Tree t : trees) {
@@ -170,23 +179,43 @@ public class MainGameScreen implements Screen {
     @Override
 
     public void render(float delta) {
+        GameManager.getNewGame().getTentacleMonsters().removeIf(TentacleMonster::isDead);
+        GameManager.getNewGame().getPoints().removeIf(Point::getVisible);
+
         player.update(delta);
         for (Image heart : heartImages) {
             heart.remove();
         }
         heartImages.clear();
 
+        timeAccumulator += delta;
+        if (timeAccumulator >= 1) {
+            time -= 1;
+            timeAccumulator = 0;
+            passedTime += 1;
+        }
+
         if (!player.isDamaged()) {
             for (Tree tree : trees) {
                 if (player.getBox().overlaps(tree.getBox())) {
                     player.setHP();
                     player.setDamaged(true);
-                    player.setInvincibleTimer(1f);
+                    player.setInvincibleTimer(1.5f);
                     if (player.getHP() <= 0) {
                         ((Game) Gdx.app.getApplicationListener()).setScreen(Menu.GAME_OVER.getScreen());
                     }
                 }
             }
+        }
+
+
+        if (passedTime % 3 == 0) {
+            int numberOfMonsters = (int) passedTime / 10;
+            spawnMonsters(numberOfMonsters);
+        }
+
+        for (TentacleMonster monster : GameManager.getNewGame().getTentacleMonsters()) {
+            monster.update(delta);
         }
 
 
@@ -212,10 +241,11 @@ public class MainGameScreen implements Screen {
         }
 
 
-        xpLabel = new Label("XP: " + player.getXP(), new Label.LabelStyle(GameManager.getFont(1), Color.WHITE));
+        xpLabel.setText("XP: " + player.getXP());
         xpLabel.setPosition(280, Gdx.graphics.getHeight() - 50);
-        levelLabel = new Label("Level: " + player.getXP(), new Label.LabelStyle(GameManager.getFont(1), Color.WHITE));
+        levelLabel.setText("Level: " + player.getXP());
         levelLabel.setPosition(400, Gdx.graphics.getHeight() - 50);
+        timeLabel.setText((int) time / 60 + ":" + (int) (time % 60) + "\nSurvived!");
 
         camera.position.set(player.getPlayerImage().getX() + player.getPlayerImage().getWidth() / 2,
             player.getPlayerImage().getY() + player.getPlayerImage().getHeight() / 2, 0);
@@ -226,6 +256,35 @@ public class MainGameScreen implements Screen {
         stage.draw();
         fixedStage.act(delta);
         fixedStage.draw();
+    }
+
+    public void spawnMonsters(int count) {
+
+        for (int i = 0; i < count; i++) {
+            int random = (int) (Math.random() * 4);
+            double x = 0;
+            double y = 0;
+            TentacleMonster monster = null;
+
+            if (random == 0) {
+                x = Math.random() * Gdx.graphics.getWidth();
+                monster = new TentacleMonster((int) x, 0);
+
+            } else if (random == 1) {
+                y = Math.random() * Gdx.graphics.getHeight();
+                monster = new TentacleMonster(0, (int) y);
+            } else if (random == 2) {
+                y = Math.random() * Gdx.graphics.getHeight();
+                monster = new TentacleMonster(Gdx.graphics.getWidth(), (int) y);
+            } else if (random == 3) {
+                x = Math.random() * Gdx.graphics.getWidth();
+                monster = new TentacleMonster((int) x, Gdx.graphics.getHeight());
+
+            }
+            GameManager.getNewGame().getTentacleMonsters().add(monster);
+            stage.addActor(monster.getMonsterImage());
+
+        }
     }
 
 
