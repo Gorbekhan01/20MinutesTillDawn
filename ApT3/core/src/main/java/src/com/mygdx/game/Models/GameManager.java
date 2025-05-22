@@ -3,6 +3,7 @@ package src.com.mygdx.game.Models;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
@@ -63,6 +64,8 @@ public class GameManager {
     public static ArrayList<User> getUsers() {
         return users;
     }
+
+    public static Sound sound;
 
     private static final String[] securityQs = {
         "What is your favorite color?",
@@ -163,5 +166,10 @@ public class GameManager {
 
     public static ArrayList<Pair<String, Integer>> getKeys() {
         return keys;
+    }
+
+    public static void playSound(String address) {
+        sound = Gdx.audio.newSound(Gdx.files.internal(address));
+        sound.play();
     }
 }

@@ -76,6 +76,7 @@ public class GameOver implements Screen {
         backButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeListener.ChangeEvent event, Actor actor) {
+//                GameManager.getNewGame().getSavedGame().dispose();
                 ((Game) Gdx.app.getApplicationListener()).setScreen(Menu.MAIN_MENU.getScreen());
             }
         });

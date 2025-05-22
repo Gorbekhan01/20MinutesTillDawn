@@ -87,7 +87,7 @@ public class MainGameScreen implements Screen {
         // XP & Level
         xpLabel = new Label("XP: " + player.getXP(), new Label.LabelStyle(GameManager.getFont(1), Color.WHITE));
         xpLabel.setPosition(280, Gdx.graphics.getHeight() - 50);
-        levelLabel = new Label("Level: " + player.getXP(), new Label.LabelStyle(GameManager.getFont(1), Color.WHITE));
+        levelLabel = new Label("Level: " + player.getLevel(), new Label.LabelStyle(GameManager.getFont(1), Color.WHITE));
         levelLabel.setPosition(400, Gdx.graphics.getHeight() - 50);
         timeLabel = new Label((int) time / 60 + ":" + time % 60, new Label.LabelStyle(GameManager.getFont(1), Color.WHITE));
         timeLabel.setPosition(600, Gdx.graphics.getHeight() - 50);
@@ -123,6 +123,11 @@ public class MainGameScreen implements Screen {
                     System.out.println("Tree " + tree.getBox().getX() + " " + tree.getBox().getY());
                 }
             }
+            GameManager.getNewGame().getEyeBat().removeIf(EyeBat::isDead);
+            GameManager.getNewGame().getTentacleMonsters().removeIf(TentacleMonster::isDead);
+            GameManager.getNewGame().getElder().removeIf(Elder::isDead);
+
+
         }
 
         stage.addActor(player.getPlayerImage());
@@ -243,6 +248,8 @@ public class MainGameScreen implements Screen {
         }
         GameManager.getNewGame().getPoints().removeIf(Point::getVisible);
 
+
+
         player.update(delta);
         for (Image heart : heartImages) {
             heart.remove();
@@ -260,6 +267,11 @@ public class MainGameScreen implements Screen {
         if (player.getHP() <= 0) {
             GameManager.getNewGame().setResult("dead");
             GameManager.getNewGame().setSurvivedTime(passedTime);
+            GameManager.playSound("sounds/lost.wav");
+            GameManager.getNewGame().getElder().removeIf(Elder::isDead);
+            GameManager.getNewGame().getEyeBat().removeIf(EyeBat::isDead);
+            GameManager.getNewGame().getTentacleMonsters().removeIf(TentacleMonster::isDead);
+            GameManager.getNewGame().setWasPaused(false);
             ((Game) Gdx.app.getApplicationListener()).setScreen(Menu.GAME_OVER.getScreen());
         }
 
@@ -267,6 +279,11 @@ public class MainGameScreen implements Screen {
         if (time == 0) {
             GameManager.getNewGame().setResult("victory");
             GameManager.getNewGame().setSurvivedTime(passedTime);
+            GameManager.playSound("sounds/win.wav");
+            GameManager.getNewGame().getElder().removeIf(Elder::isDead);
+            GameManager.getNewGame().getEyeBat().removeIf(EyeBat::isDead);
+            GameManager.getNewGame().getTentacleMonsters().removeIf(TentacleMonster::isDead);
+            GameManager.getNewGame().setWasPaused(false);
             ((Game) Gdx.app.getApplicationListener()).setScreen(Menu.GAME_OVER.getScreen());
         }
 
@@ -354,6 +371,10 @@ public class MainGameScreen implements Screen {
             monster.update(delta);
         }
 
+        for (Tree tree : trees) {
+            stage.addActor(tree.getImage());
+        }
+
 
         int lastInt = 0;
 
@@ -395,6 +416,7 @@ public class MainGameScreen implements Screen {
         stage.draw();
         fixedStage.act(delta);
         fixedStage.draw();
+
     }
 
     public void spawnMonsters(int count) {
@@ -508,5 +530,6 @@ public class MainGameScreen implements Screen {
         backgroundTexture.dispose();
         fixedStage.dispose();
         world.dispose();
+
     }
 }

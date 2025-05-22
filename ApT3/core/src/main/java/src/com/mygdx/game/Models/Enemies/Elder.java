@@ -73,6 +73,7 @@ public class Elder {
 
             if (explosionAnimation.isAnimationFinished(stateTime2)) {
                 explosionImage.remove();
+                isDead = true;
                 this.dispose();
             }
             return;

@@ -30,6 +30,7 @@ public class PreGameMenu implements Screen {
     private int timeCounter = 1;
     private double time = 0;
     private Weapons weaponType;
+    private Player player;
 
 
     @Override
@@ -42,6 +43,7 @@ public class PreGameMenu implements Screen {
         weaponName = new Label("", skin);
         timeName = new Label("", skin);
         preGameMenuCreator();
+        player = new Player();
     }
 
     public void preGameMenuCreator() {
@@ -228,6 +230,7 @@ public class PreGameMenu implements Screen {
         start.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
+                GameManager.getCurrentUser().setPlayer(player);
                 NewGame newGame = new NewGame(time,GameManager.getCurrentUser().getPlayer());
                 if (upInt!=0) newGame.setUpKey(upInt);
                 if (downInt!=0) newGame.setDownKey(downInt);
@@ -235,8 +238,8 @@ public class PreGameMenu implements Screen {
                 if (leftInt!=0) newGame.setLeftKey(leftInt);
                 if (shootInt!=0) newGame.setShootKey(shootInt);
                 if (reloadInt!=0) newGame.setShootKey(reloadInt);
-
                 GameManager.setNewGame(newGame);
+                System.out.println("new gm");
                 Weapon weapon1 = new Weapon(weaponType);
                 newGame.getPlayer().setWeapons(weapon1);
                 GameManager.getNewGame().getPlayer().initializePlayer();
@@ -331,23 +334,23 @@ public class PreGameMenu implements Screen {
         character.setDrawable(new Image(avatarTexture).getDrawable());
         switch (characterCounter) {
             case 0:
-                GameManager.getCurrentUser().getPlayer().setHero(Heroes.DASHER);
+                player.setHero(Heroes.DASHER);
                 characterName.setText("Dasher");
                 break;
             case 1:
-                GameManager.getCurrentUser().getPlayer().setHero(Heroes.DIAMOND);
+                player.setHero(Heroes.DIAMOND);
                 characterName.setText("Diamond");
                 break;
             case 2:
-                GameManager.getCurrentUser().getPlayer().setHero(Heroes.LILITH);
+                player.setHero(Heroes.LILITH);
                 characterName.setText("Lilith");
                 break;
             case 3:
-                GameManager.getCurrentUser().getPlayer().setHero(Heroes.SCARLET);
+                player.setHero(Heroes.SCARLET);
                 characterName.setText("Scarlet");
                 break;
             case 4:
-                GameManager.getCurrentUser().getPlayer().setHero(Heroes.SHANA);
+                player.setHero(Heroes.SHANA);
                 characterName.setText("Shana");
                 break;
 
@@ -422,7 +425,7 @@ public class PreGameMenu implements Screen {
 
     @Override
     public void hide() {
-
+        stage.dispose();
     }
 
     @Override

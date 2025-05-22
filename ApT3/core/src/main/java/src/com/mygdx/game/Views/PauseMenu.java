@@ -11,6 +11,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import src.com.mygdx.game.Models.Enemies.Elder;
+import src.com.mygdx.game.Models.Enemies.EyeBat;
+import src.com.mygdx.game.Models.Enemies.TentacleMonster;
 import src.com.mygdx.game.Models.GameManager;
 import src.com.mygdx.game.Models.Menu;
 
@@ -33,6 +36,9 @@ public class PauseMenu implements Screen {
 
         backButton = new TextButton("Resume", GameManager.getSkin());
         giveUpButton = new TextButton("Give Up", GameManager.getSkin());
+        GameManager.getNewGame().getEyeBat().removeIf(EyeBat::isDead);
+        GameManager.getNewGame().getTentacleMonsters().removeIf(TentacleMonster::isDead);
+        GameManager.getNewGame().getElder().removeIf(Elder::isDead);
 
         createPauseMenu();
     }

@@ -25,14 +25,14 @@ public class NewGame {
     private ArrayList<TentacleMonster> tentacleMonsters = new ArrayList<>();
     private ArrayList<EyeBat> eyeBats = new ArrayList<>();
     private ArrayList<Elder> elders = new ArrayList<>();
-
-
     private ArrayList<Tree> trees = new ArrayList<>();
     private ArrayList<Point> points = new ArrayList<>();
     private String result;
     private int survivedTime = 0;
-    public MainGameScreen savedGame;
+    public MainGameScreen savedGame = new MainGameScreen();
     public boolean wasPaused = false;
+    private int playerXP = 0;
+    private int kills = 0;
 
     public NewGame(double time, Player player) {
         this.time = time;
@@ -102,6 +102,7 @@ public class NewGame {
     public int getReloadKey() {
         return reloadKey;
     }
+
     public void setReloadKey(int reloadKey) {
         this.reloadKey = reloadKey;
     }
@@ -121,6 +122,7 @@ public class NewGame {
     public String getResult() {
         return result;
     }
+
     public int getSurvivedTime() {
         return survivedTime;
     }
@@ -157,6 +159,21 @@ public class NewGame {
         return elders;
     }
 
+    public int getPlayerXP() {
+        return playerXP;
+    }
+
+    public void setPlayerXP(int playerXP) {
+        this.playerXP = playerXP;
+    }
+
+    public int getKills() {
+        return kills;
+    }
+
+    public void setKills(int kills) {
+        this.kills = kills;
+    }
 
 
 }

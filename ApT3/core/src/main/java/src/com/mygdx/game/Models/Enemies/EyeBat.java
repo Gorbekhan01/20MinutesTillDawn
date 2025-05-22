@@ -73,6 +73,7 @@ public class EyeBat {
 
             if (explosionAnimation.isAnimationFinished(stateTime2)) {
                 explosionImage.remove();
+                isDead = true;
                 this.dispose();
             }
             return;
@@ -100,6 +101,7 @@ public class EyeBat {
             GameManager.getNewGame().getGameStage().addActor(point.getImageBox());
             GameManager.getNewGame().getPoints().add(point);
             GameManager.getNewGame().getGameStage().addActor(explosionImage);
+            this.dispose();
             isDead = true;
         } else {
             if (direction.x < 0) {

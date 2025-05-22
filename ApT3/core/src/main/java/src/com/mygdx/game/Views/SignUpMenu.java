@@ -67,8 +67,8 @@ public class SignUpMenu implements Screen {
         usernameField.setStyle(textFieldStyle);
         passwordField = new TextField("", skin);
         passwordField.setStyle(textFieldStyle);
-        passwordField.setPasswordMode(true);
-        passwordField.setPasswordCharacter('*');
+//        passwordField.setPasswordMode(true);
+//        passwordField.setPasswordCharacter('*');
         confirmPasswordField = new TextField("", skin);
         confirmPasswordField.setPasswordMode(true);
         confirmPasswordField.setPasswordCharacter('*');

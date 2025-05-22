@@ -28,8 +28,10 @@ public class LoginMenu implements Screen {
     private LoginMenuController controller;
     private boolean first = true;
     Table buttonTable;
-    private User currentUser;
+    private User currentUser = null;
     TextField.TextFieldStyle textFieldStyle;
+    private boolean validPassword = false;
+    private boolean validUsername = false;
 
     @Override
     public void show() {
@@ -91,30 +93,41 @@ public class LoginMenu implements Screen {
                     return;
                 }
 
-                //find user by username
+                validUsername = false;
+                validPassword = false;
+                currentUser = null;
+
                 if (!GameManager.getUsers().isEmpty()) {
                     for (User user : GameManager.getUsers()) {
                         if (user.getUsername().equals(username)) {
                             currentUser = user;
+                            validUsername = true;
                             break;
                         }
                     }
                 }
 
-                if (currentUser == null) {
+                if (!validUsername || currentUser == null) {
                     errorLabel.setText("User not found");
                     return;
                 }
+
                 if (!controller.checkPassword(currentUser, password)) {
                     errorLabel.setText("Wrong Password");
+                    return;
+                } else {
+                    validPassword = true;
                 }
 
-                stage.clear();
-                GameManager.setCurrentUser(currentUser);
-                ((Game) Gdx.app.getApplicationListener()).setScreen(Menu.MAIN_MENU.getScreen());
-
+                if (validUsername && validPassword) {
+                    stage.clear();
+                    GameManager.setCurrentUser(currentUser);
+                    ((Game) Gdx.app.getApplicationListener()).setScreen(Menu.MAIN_MENU.getScreen());
+                }
             }
         });
+
+
 
         forgetPasswordButton.addListener(new ChangeListener() {
             @Override
@@ -132,6 +145,7 @@ public class LoginMenu implements Screen {
                         for (User user : GameManager.getUsers()) {
                             if (user.getUsername().equals(username)) {
                                 currentUser = user;
+                                System.out.println(user.getUsername());
                                 break;
                             }
                         }

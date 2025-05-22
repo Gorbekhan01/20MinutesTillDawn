@@ -17,6 +17,8 @@ import src.com.mygdx.game.Models.Enemies.TentacleMonster;
 import src.com.mygdx.game.Models.Enums.Heroes;
 import src.com.mygdx.game.Models.Enums.Weapons;
 
+import java.util.logging.Level;
+
 public class Player {
     private Image playerImage;
     private Vector2 position;
@@ -27,7 +29,7 @@ public class Player {
     private Texture[] walkFrames;
     private Heroes hero = Heroes.DASHER;
     private Weapon weapon = null;
-    private int HP;
+    private int HP = 0;
     private int level = 0;
     private int XP = 0;
     private Rectangle box;
@@ -51,11 +53,14 @@ public class Player {
 
         position = new Vector2(600, 600);
         velocity = new Vector2(0, 0);
+        HP = hero.getHP();
 
         playerImage = new Image(new TextureRegionDrawable(regions[0]));
         playerImage.setSize(15, 20);
         playerImage.setPosition(position.x, position.y);
         box = new Rectangle(position.x, position.y, playerImage.getImageWidth(), playerImage.getImageHeight());
+        XP = 0;
+        level =0;
 
     }
 
@@ -123,6 +128,7 @@ public class Player {
 
         for (Point point : GameManager.getNewGame().getPoints()) {
             if (Intersector.overlaps(box, point.getBox())) {
+                GameManager.playSound("sounds/point.wav");
                 point.setVisible(true);
                 setXP(3);
                 point.getImageBox().remove();
@@ -187,6 +193,7 @@ public class Player {
             weapon.setIsReloading(true);
         }
         if (!weapon.isReloading()) {
+            GameManager.playSound("sounds/shot.wav");
             Vector2 bulletDirection = new Vector2((float) Math.cos(Math.toRadians(weapon.getWeaponImage().getRotation())),
                 (float) Math.sin(Math.toRadians(weapon.getWeaponImage().getRotation())));
 

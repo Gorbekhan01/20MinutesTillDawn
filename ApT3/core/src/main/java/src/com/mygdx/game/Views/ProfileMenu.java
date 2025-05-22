@@ -4,7 +4,9 @@ import com.badlogic.gdx.*;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
+
 import javax.swing.JFileChooser;
+
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -23,6 +25,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import src.com.mygdx.game.Controllers.ProfileMenuController;
 import src.com.mygdx.game.Models.GameManager;
 import src.com.mygdx.game.Models.Menu;
+import src.com.mygdx.game.Models.User;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -35,7 +38,7 @@ import java.io.IOException;
 public class ProfileMenu implements Screen {
     private Stage stage;
     private Skin skin = GameManager.getSkin();
-    private TextButton usernameChangeButton, passwordChangeButton , selectFileButton , backButton , deleteAccountButton;
+    private TextButton usernameChangeButton, passwordChangeButton, selectFileButton, backButton, deleteAccountButton;
     private TextField username, password;
     private Label error;
     private Table mainTable;
@@ -50,6 +53,7 @@ public class ProfileMenu implements Screen {
         stage = new Stage();
         Gdx.input.setInputProcessor(stage);
         mainTable = new Table();
+        controller = new ProfileMenuController();
 
         createProfileMenu();
 
@@ -73,7 +77,7 @@ public class ProfileMenu implements Screen {
         selectFileButton = new TextButton("Select Image", skin);
         selectFileButton.setPosition(100, 100);
 
-        mainTable.add(avatarImage).size(100,100).row();
+        mainTable.add(avatarImage).size(100, 100).row();
         mainTable.add(selectFileButton).row();
 
         Table usernameTable = new Table();
@@ -110,7 +114,9 @@ public class ProfileMenu implements Screen {
         mainTable.add(backButton).padTop(10).center();
 
         addListeners();
-
+        error = new Label("", skin);
+        mainTable.row();
+        mainTable.add(error);
         stage.addActor(mainTable);
 
 
@@ -121,20 +127,56 @@ public class ProfileMenu implements Screen {
         selectFileButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                FileDialog fileDialog = new FileDialog((Frame) null,"select file",FileDialog.LOAD);
+                FileDialog fileDialog = new FileDialog((Frame) null, "select file", FileDialog.LOAD);
                 fileDialog.setMode(FileDialog.LOAD);
                 fileDialog.setVisible(true);
 
                 String selectedFilePath = fileDialog.getDirectory() + fileDialog.getFile();
                 if (selectedFilePath != null) {
-                    System.out.println( "selected file: " + selectedFilePath);
+                    System.out.println("selected file: " + selectedFilePath);
                     avatarTexture = new Texture(Gdx.files.absolute(selectedFilePath));
                 }
-                avatarImage= new Image(new TextureRegionDrawable(new TextureRegion(avatarTexture)));
+                avatarImage = new Image(new TextureRegionDrawable(new TextureRegion(avatarTexture)));
 
 
             }
         });
+
+        usernameChangeButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                if (username.getText().isEmpty()) {
+                    error.setText("username field is empty");
+                    return;
+                }
+                String result = controller.isUsernameTaken(username.getText());
+                if (result != null) {
+                   error.setText(result);
+                } else {
+                    error.setText("username changed!");
+                    GameManager.getCurrentUser().setUsername(username.getText());
+                }
+            }
+        });
+
+        passwordChangeButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                if (password.getText().isEmpty()) {
+                    error.setText("password field is empty");
+                    return;
+                }
+                String result = controller.checkPasswordStrength(password.getText());
+                if (result != null) {
+                    error.setText(result);
+                } else {
+                    error.setText("password changed!");
+                    GameManager.getCurrentUser().setUsername(password.getText());
+                }
+            }
+        });
+
+
         deleteAccountButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
@@ -149,7 +191,6 @@ public class ProfileMenu implements Screen {
                 ((Game) Gdx.app.getApplicationListener()).setScreen(Menu.MAIN_MENU.getScreen());
             }
         });
-
 
 
     }

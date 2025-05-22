@@ -108,6 +108,9 @@ public class User {
         this.mostTimeSurvived = Math.max(this.mostTimeSurvived, mostTimeSurvived);
     }
 
+    public void setPlayer(Player player) {
+        this.player = player;
+    }
     public Player getPlayer() {
         return player;
     }

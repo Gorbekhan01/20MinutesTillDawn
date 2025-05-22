@@ -71,6 +71,7 @@ public class TentacleMonster {
 
             if (explosionAnimation.isAnimationFinished(stateTime2)) {
                 explosionImage.remove();
+                isDead = true;
                 this.dispose();
             }
             return;
@@ -91,8 +92,10 @@ public class TentacleMonster {
             Point point = new Point(position.x, position.y);
             GameManager.getNewGame().getGameStage().addActor(point.getImageBox());
             GameManager.getNewGame().getPoints().add(point);
-            GameManager.getNewGame().getGameStage().addActor(explosionImage);
+            this.dispose();
             isDead = true;
+            GameManager.getNewGame().getGameStage().addActor(explosionImage);
+
         } else {
             if (direction.x < 0) {
                 monsterImage.setScale(-1, 1);
