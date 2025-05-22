@@ -9,6 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.math.Intersector;
+import src.com.mygdx.game.Models.Enemies.Elder;
 import src.com.mygdx.game.Models.Enemies.EyeBat;
 import src.com.mygdx.game.Models.Enemies.TentacleMonster;
 
@@ -27,8 +28,12 @@ public class Bullet extends Actor {
             bulletTexture= new Texture("weapons/Ammo.png");
         }
         bulletImage = new Image(bulletTexture);
+        if (isEyeBat) {
+            box = new Rectangle(position.x, position.y, 12, 12);
+        } else {
+            box = new Rectangle(position.x, position.y, 8, 8);
+        }
         bulletImage.setSize(4, 4);
-        box = new Rectangle(position.x, position.y, 8, 8);
         bulletImage.setPosition(position.x, position.y);
         if (isEyeBat) {
             this.velocity = direction.nor().scl(60);
@@ -74,6 +79,17 @@ public class Bullet extends Actor {
                     }
                 }
             }
+
+            if (!collision) {
+                for (Elder elder : GameManager.getNewGame().getElder()) {
+                    if (elder.getBox().overlaps(box)) {
+                        elder.setHp(GameManager.getNewGame().getPlayer().getWeapons().getDamage());
+                        bulletImage.remove();
+                        break;
+                    }
+                }
+            }
+
 
         }
 

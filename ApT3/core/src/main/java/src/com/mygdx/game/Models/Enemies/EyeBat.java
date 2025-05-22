@@ -14,7 +14,7 @@ import src.com.mygdx.game.Models.Point;
 public class EyeBat {
     private Vector2 position;
     private int Hp = 50;
-    private float speed = 7f;
+    private float speed = 20f;
     private Animation<TextureRegion> walkAnimation, explosionAnimation;
     private float stateTime, stateTime2;
     private Image monsterImage, explosionImage;
@@ -98,7 +98,9 @@ public class EyeBat {
             explosionImage.setPosition(position.x, position.y);
             Point point = new Point(position.x, position.y);
             GameManager.getNewGame().getGameStage().addActor(point.getImageBox());
+            GameManager.getNewGame().getPoints().add(point);
             GameManager.getNewGame().getGameStage().addActor(explosionImage);
+            isDead = true;
         } else {
             if (direction.x < 0) {
                 monsterImage.setScale(-1, 1);

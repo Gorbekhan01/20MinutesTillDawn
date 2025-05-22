@@ -11,6 +11,8 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import src.com.mygdx.game.Models.Enemies.Elder;
+import src.com.mygdx.game.Models.Enemies.EyeBat;
 import src.com.mygdx.game.Models.Enemies.TentacleMonster;
 import src.com.mygdx.game.Models.Enums.Heroes;
 import src.com.mygdx.game.Models.Enums.Weapons;
@@ -130,7 +132,31 @@ public class Player {
 
         if (!damaged) {
             for (TentacleMonster monster : GameManager.getNewGame().getTentacleMonsters()) {
-                if (Intersector.overlaps(box, monster.getBox())) {
+                if (Intersector.overlaps(box, monster.getBox()) && !monster.isDead()) {
+                    HP -= 1;
+                    damaged = true;
+                    position = new Vector2(this.getPosition().x+5, this.getPosition().y+5);
+                    invincibleTimer = 2f;
+                    break;
+                }
+            }
+        }
+
+        if (!damaged) {
+            for (EyeBat monster : GameManager.getNewGame().getEyeBat()) {
+                if (Intersector.overlaps(box, monster.getBox()) && !monster.isDead()) {
+                    HP -= 1;
+                    damaged = true;
+                    position = new Vector2(this.getPosition().x+5, this.getPosition().y+5);
+                    invincibleTimer = 2f;
+                    break;
+                }
+            }
+        }
+
+        if (!damaged) {
+            for (Elder monster : GameManager.getNewGame().getElder()) {
+                if (Intersector.overlaps(box, monster.getBox()) && !monster.isDead()) {
                     HP -= 1;
                     damaged = true;
                     position = new Vector2(this.getPosition().x+5, this.getPosition().y+5);

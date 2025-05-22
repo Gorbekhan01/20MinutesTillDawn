@@ -12,6 +12,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import src.com.mygdx.game.Models.Enemies.Elder;
 import src.com.mygdx.game.Models.Enemies.EyeBat;
 import src.com.mygdx.game.Models.Enemies.TentacleMonster;
 import src.com.mygdx.game.Models.Enemies.Tree;
@@ -38,11 +39,17 @@ public class MainGameScreen implements Screen {
     private ArrayList<Image> heartImages = new ArrayList<>();
     private ArrayList<Tree> trees = new ArrayList<>();
     private double time;
+    private double totalTime;
     private float timeAccumulator = 0;
     private int passedTime = 0;
     private RayHandler rayHandler;
     private PointLight playerLight;
     private World world;
+    private boolean elderSpawned = false;
+    private float lasTimeSpawnedTentacle = 0;
+    private float getLasTimeSpawnedEyebat = 0;
+    private boolean firstTimeSpawnedTentacle = true;
+    private boolean firstTimeSpawnedEyebat = true;
 
     @Override
     public void show() {
@@ -150,6 +157,7 @@ public class MainGameScreen implements Screen {
                     player.getWeapons().setIsReloading(true);
                 } else if (keycode == Input.Keys.NUM_1) { // cheat code for time
                     time = 60;
+                    totalTime = 60;
                 } else if (keycode == Input.Keys.NUM_2) { // cheat code for health
                     player.addHp(1);
                 } else if (keycode == Input.Keys.P) { // pause the game
@@ -203,6 +211,7 @@ public class MainGameScreen implements Screen {
             }
         });
         create();
+        totalTime = GameManager.getNewGame().getTime() * 60;
     }
 
 
@@ -232,7 +241,6 @@ public class MainGameScreen implements Screen {
             }
             GameManager.getNewGame().setWasPaused(false);
         }
-        GameManager.getNewGame().getTentacleMonsters().removeIf(TentacleMonster::isDead);
         GameManager.getNewGame().getPoints().removeIf(Point::getVisible);
 
         player.update(delta);
@@ -274,24 +282,75 @@ public class MainGameScreen implements Screen {
         }
 
 
+        // spawning enemies
         if (passedTime % 4 == 0) {
-            int numberOfMonsters = (int) (passedTime / 30) + 1;
-            spawnMonsters(numberOfMonsters);
-        }
-        for (TentacleMonster monster : GameManager.getNewGame().getTentacleMonsters()) {
-            monster.update(delta);
-        }
-
-        if (passedTime >= GameManager.getNewGame().getTime() * 60 / 4) {
-            if ((passedTime & 10) == 0) {
-                int numberOfMonsters = (int) (4 * passedTime - (int) GameManager.getNewGame().getTime() * 60 + 30) / 30;
-                spawnEyeBat(numberOfMonsters);
+            if (firstTimeSpawnedTentacle) {
+                int numberOfMonsters;
+                if (totalTime == 1) {
+                    numberOfMonsters = (int) (passedTime / 10) + 1;
+                } else {
+                    numberOfMonsters = (int) (passedTime / 30) + 1;
+                }
+                spawnMonsters(numberOfMonsters);
+                firstTimeSpawnedTentacle = false;
+                lasTimeSpawnedTentacle = passedTime;
+            } else if (passedTime != lasTimeSpawnedTentacle) {
+                int numberOfMonsters;
+                if (totalTime == 1) {
+                    numberOfMonsters = (int) (passedTime / 10) + 1;
+                } else {
+                    numberOfMonsters = (int) (passedTime / 30) + 1;
+                }
+                spawnMonsters(numberOfMonsters);
+                lasTimeSpawnedTentacle = passedTime;
             }
         }
+
+        if (passedTime >= totalTime / 4) {
+            if (firstTimeSpawnedEyebat) {
+                if ((passedTime & 10) == 0) {
+                    int numberOfMonsters;
+                    if (totalTime == 1) {
+                        numberOfMonsters = (int) (5 * passedTime - (int) totalTime + 30) / 12;
+                    } else {
+                        numberOfMonsters = (int) (4 * passedTime - (int) totalTime + 30) / 30;
+                    }
+                    spawnEyeBat(numberOfMonsters);
+                }
+                lasTimeSpawnedTentacle = passedTime;
+                firstTimeSpawnedEyebat = false;
+            } else {
+                if (passedTime != lasTimeSpawnedTentacle) {
+                    if ((passedTime & 10) == 0) {
+                        int numberOfMonsters;
+                        if (totalTime == 1) {
+                            numberOfMonsters = (int) (5 * passedTime - (int) totalTime + 30) / 12;
+                        } else {
+                            numberOfMonsters = (int) (4 * passedTime - (int) totalTime + 30) / 30;
+                        }
+                        spawnEyeBat(numberOfMonsters);
+                    }
+                    lasTimeSpawnedTentacle = passedTime;
+                }
+            }
+        }
+
+        if (!elderSpawned) {
+            if (passedTime >= totalTime / 2) {
+                spawnElder(1);
+                elderSpawned = true;
+            }
+        }
+
+
+        //updating enemies
         for (TentacleMonster monster : GameManager.getNewGame().getTentacleMonsters()) {
             monster.update(delta);
         }
         for (EyeBat monster : GameManager.getNewGame().getEyeBat()) {
+            monster.update(delta);
+        }
+        for (Elder monster : GameManager.getNewGame().getElder()) {
             monster.update(delta);
         }
 
@@ -390,6 +449,34 @@ public class MainGameScreen implements Screen {
 
             }
             GameManager.getNewGame().getEyeBat().add(monster);
+            stage.addActor(monster.getMonsterImage());
+        }
+    }
+
+    public void spawnElder(int count) {
+
+        for (int i = 0; i < count; i++) {
+            int random = (int) (Math.random() * 4);
+            double x = 0;
+            double y = 0;
+            Elder monster = null;
+
+            if (random == 0) {
+                x = Math.random() * Gdx.graphics.getWidth();
+                monster = new Elder((int) x, 0);
+
+            } else if (random == 1) {
+                y = Math.random() * Gdx.graphics.getHeight();
+                monster = new Elder(0, (int) y);
+            } else if (random == 2) {
+                y = Math.random() * Gdx.graphics.getHeight();
+                monster = new Elder(Gdx.graphics.getWidth(), (int) y);
+            } else if (random == 3) {
+                x = Math.random() * Gdx.graphics.getWidth();
+                monster = new Elder((int) x, Gdx.graphics.getHeight());
+
+            }
+            GameManager.getNewGame().getElder().add(monster);
             stage.addActor(monster.getMonsterImage());
         }
     }

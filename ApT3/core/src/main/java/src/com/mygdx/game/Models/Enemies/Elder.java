@@ -1,6 +1,5 @@
 package src.com.mygdx.game.Models.Enemies;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -11,35 +10,38 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import src.com.mygdx.game.Models.GameManager;
 import src.com.mygdx.game.Models.Point;
 
-public class TentacleMonster {
+public class Elder {
     private Vector2 position;
-    private int Hp = 25;
-    private float speed = 16f;
+    private int Hp = 400;
+    private float normalSpeed = 20f;
+    private float dashSpeedMultiplier = 260f;
+    private float dashTime = 5f;
     private Animation<TextureRegion> walkAnimation, explosionAnimation;
     private float stateTime, stateTime2;
     private Image monsterImage, explosionImage;
     private Rectangle box;
     private boolean isDead = false, isExploding = false;
+    private float dashTimer = 0;
+    private boolean isDashing = false;
+    private Vector2 savedPosition = new Vector2();
 
     private String[] images = new String[]{
-        "enemies/TentacleMonster/1.png",
-        "enemies/TentacleMonster/2.png",
-        "enemies/TentacleMonster/3.png"
+            "enemies/elder/1.png",
     };
 
     private String[] explosionImages = new String[]{
-        "enemies/explosion/1.png",
-        "enemies/explosion/2.png",
-        "enemies/explosion/3.png",
-        "enemies/explosion/4.png"
+            "enemies/explosion/1.png",
+            "enemies/explosion/2.png",
+            "enemies/explosion/3.png",
+            "enemies/explosion/4.png"
     };
 
-    public TentacleMonster(int startX, int startY) {
+    public Elder(int startX, int startY) {
         this.position = new Vector2(startX, startY);
         initializeAnimation();
         initializeExplosion();
         monsterImage.setPosition(position.x, position.y);
-        box = new Rectangle(position.x, position.y, 24, 24);
+        box = new Rectangle(position.x, position.y, 55, 55);
     }
 
     private void initializeAnimation() {
@@ -50,7 +52,7 @@ public class TentacleMonster {
         walkAnimation = new Animation<>(0.1f, frames);
         stateTime = 0f;
         monsterImage = new Image(new TextureRegionDrawable(frames[0]));
-        monsterImage.setSize(20, 20);
+        monsterImage.setSize(55, 55);
     }
 
     private void initializeExplosion() {
@@ -61,7 +63,7 @@ public class TentacleMonster {
         explosionAnimation = new Animation<>(0.1f, frames);
         stateTime2 = 0f;
         explosionImage = new Image(new TextureRegionDrawable(frames[0]));
-        explosionImage.setSize(20, 20);
+        explosionImage.setSize(55, 55);
     }
 
     public void update(float delta) {
@@ -76,12 +78,30 @@ public class TentacleMonster {
             return;
         }
 
-        stateTime += delta;
-        box.setPosition(position.x, position.y);
-        Vector2 playerPosition = GameManager.getNewGame().getPlayer().getPosition();
+        dashTimer += delta;
 
-        Vector2 direction = new Vector2(playerPosition).sub(position).nor();
-        position.add(direction.scl(speed * delta));
+        if (!isDashing && dashTimer >= dashTime) {
+            isDashing = true;
+            savedPosition = new Vector2(GameManager.getNewGame().getPlayer().getPosition().x + 5
+                    , GameManager.getNewGame().getPlayer().getPosition().y + 5);
+            dashTimer = 0;
+        }
+
+        box.setPosition(position.x, position.y);
+        Vector2 direction = new Vector2(savedPosition).sub(position).nor();
+
+        if (isDashing) {
+            position.add(direction.scl(dashSpeedMultiplier * delta));
+
+            if (position.dst(savedPosition) < 3f) {
+                isDashing = false;
+                dashTimer = 0;
+            }
+        } else {
+            Vector2 normalDirection = new Vector2(GameManager.getNewGame().getPlayer().getPosition()).sub(position).nor();
+            position.add(normalDirection.scl(normalSpeed * delta));
+        }
+
 
         if (Hp <= 0 && !isExploding) {
             isExploding = true;
@@ -94,11 +114,6 @@ public class TentacleMonster {
             GameManager.getNewGame().getGameStage().addActor(explosionImage);
             isDead = true;
         } else {
-            if (direction.x < 0) {
-                monsterImage.setScale(-1, 1);
-            } else {
-                monsterImage.setScale(1, 1);
-            }
             monsterImage.setPosition(position.x, position.y);
             monsterImage.setDrawable(new TextureRegionDrawable(walkAnimation.getKeyFrame(stateTime, true)));
         }

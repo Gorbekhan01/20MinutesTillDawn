@@ -3,6 +3,7 @@ package src.com.mygdx.game.Models;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import src.com.mygdx.game.Models.Enemies.Elder;
 import src.com.mygdx.game.Models.Enemies.EyeBat;
 import src.com.mygdx.game.Models.Enemies.TentacleMonster;
 import src.com.mygdx.game.Models.Enemies.Tree;
@@ -23,6 +24,8 @@ public class NewGame {
     private int reloadKey = 46;
     private ArrayList<TentacleMonster> tentacleMonsters = new ArrayList<>();
     private ArrayList<EyeBat> eyeBats = new ArrayList<>();
+    private ArrayList<Elder> elders = new ArrayList<>();
+
 
     private ArrayList<Tree> trees = new ArrayList<>();
     private ArrayList<Point> points = new ArrayList<>();
@@ -149,6 +152,11 @@ public class NewGame {
     public ArrayList<EyeBat> getEyeBat() {
         return eyeBats;
     }
+
+    public ArrayList<Elder> getElder() {
+        return elders;
+    }
+
 
 
 }
