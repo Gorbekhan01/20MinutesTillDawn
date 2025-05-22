@@ -3,6 +3,7 @@ package src.com.mygdx.game.Models;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import src.com.mygdx.game.Models.Enemies.EyeBat;
 import src.com.mygdx.game.Models.Enemies.TentacleMonster;
 import src.com.mygdx.game.Models.Enemies.Tree;
 import src.com.mygdx.game.Views.MainGameScreen;
@@ -19,7 +20,10 @@ public class NewGame {
     private int upKey = 51;
     private int downKey = 47;
     private int shootKey = 62;
+    private int reloadKey = 46;
     private ArrayList<TentacleMonster> tentacleMonsters = new ArrayList<>();
+    private ArrayList<EyeBat> eyeBats = new ArrayList<>();
+
     private ArrayList<Tree> trees = new ArrayList<>();
     private ArrayList<Point> points = new ArrayList<>();
     private String result;
@@ -92,6 +96,13 @@ public class NewGame {
         this.shootKey = shootKey;
     }
 
+    public int getReloadKey() {
+        return reloadKey;
+    }
+    public void setReloadKey(int reloadKey) {
+        this.reloadKey = reloadKey;
+    }
+
     public ArrayList<TentacleMonster> getTentacleMonsters() {
         return tentacleMonsters;
     }
@@ -133,6 +144,10 @@ public class NewGame {
 
     public ArrayList<Tree> getTrees() {
         return trees;
+    }
+
+    public ArrayList<EyeBat> getEyeBat() {
+        return eyeBats;
     }
 
 

@@ -1,6 +1,8 @@
 package src.com.mygdx.game.Models;
 
+import box2dLight.PointLight;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -30,6 +32,7 @@ public class Player {
     private float invincibleTimer = 0;
     private boolean damaged = false;
     private int killCount = 0;
+
 
     public void initializePlayer() {
         walkFrames = new Texture[hero.getImages().length];
@@ -130,6 +133,7 @@ public class Player {
                 if (Intersector.overlaps(box, monster.getBox())) {
                     HP -= 1;
                     damaged = true;
+                    position = new Vector2(this.getPosition().x+5, this.getPosition().y+5);
                     invincibleTimer = 2f;
                     break;
                 }
@@ -160,7 +164,7 @@ public class Player {
             Vector2 bulletDirection = new Vector2((float) Math.cos(Math.toRadians(weapon.getWeaponImage().getRotation())),
                 (float) Math.sin(Math.toRadians(weapon.getWeaponImage().getRotation())));
 
-            Bullet bullet = new Bullet(new Vector2(position.x, position.y), bulletDirection);
+            Bullet bullet = new Bullet(new Vector2(position.x, position.y), bulletDirection,false);
             GameManager.getNewGame().getGameStage().addActor(bullet);
             GameManager.getNewGame().getBullets().add(bullet);
             weapon.setAmmo(1);

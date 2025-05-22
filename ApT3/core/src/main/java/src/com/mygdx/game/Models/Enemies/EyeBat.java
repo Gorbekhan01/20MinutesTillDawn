@@ -1,6 +1,5 @@
 package src.com.mygdx.game.Models.Enemies;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -8,23 +7,26 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import src.com.mygdx.game.Models.Bullet;
 import src.com.mygdx.game.Models.GameManager;
 import src.com.mygdx.game.Models.Point;
 
-public class TentacleMonster {
+public class EyeBat {
     private Vector2 position;
-    private int Hp = 25;
+    private int Hp = 50;
     private float speed = 7f;
     private Animation<TextureRegion> walkAnimation, explosionAnimation;
     private float stateTime, stateTime2;
     private Image monsterImage, explosionImage;
     private Rectangle box;
     private boolean isDead = false, isExploding = false;
+    private float shootTimer = 0f;
+    private final float shootInterval = 3f;
 
     private String[] images = new String[]{
-        "enemies/TentacleMonster/1.png",
-        "enemies/TentacleMonster/2.png",
-        "enemies/TentacleMonster/3.png"
+        "enemies/eyebat/1.png",
+        "enemies/eyebat/2.png",
+        "enemies/eyebat/3.png"
     };
 
     private String[] explosionImages = new String[]{
@@ -34,7 +36,7 @@ public class TentacleMonster {
         "enemies/explosion/4.png"
     };
 
-    public TentacleMonster(int startX, int startY) {
+    public EyeBat(int startX, int startY) {
         this.position = new Vector2(startX, startY);
         initializeAnimation();
         initializeExplosion();
@@ -76,6 +78,12 @@ public class TentacleMonster {
             return;
         }
 
+        shootTimer += delta;
+        if (shootTimer >= shootInterval) {
+            shoot();
+            shootTimer = 0;
+        }
+
         stateTime += delta;
         box.setPosition(position.x, position.y);
         Vector2 playerPosition = GameManager.getNewGame().getPlayer().getPosition();
@@ -100,6 +108,13 @@ public class TentacleMonster {
             monsterImage.setPosition(position.x, position.y);
             monsterImage.setDrawable(new TextureRegionDrawable(walkAnimation.getKeyFrame(stateTime, true)));
         }
+    }
+
+    private void shoot() {
+        Vector2 bulletDirection = new Vector2(GameManager.getNewGame().getPlayer().getPosition()).sub(position).nor();
+        Bullet bullet = new Bullet(new Vector2(position.x, position.y), bulletDirection, true);
+        GameManager.getNewGame().getGameStage().addActor(bullet);
+        GameManager.getNewGame().getBullets().add(bullet);
     }
 
     public Image getMonsterImage() {

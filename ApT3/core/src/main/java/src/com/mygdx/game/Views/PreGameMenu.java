@@ -22,12 +22,12 @@ public class PreGameMenu implements Screen {
     private Table mainTable;
     private Label characterName, weaponName , timeName;
     private TextButton nextCBotton, prevCBotton, nextWBotton, prevWBotton, nextTBotton, prevTBotton , start , back;
-    private TextField rightKey , leftKey, upKey, downKey , shootKey;
-    private int rightInt=0 , leftInt=0 , upInt=0 , downInt=0 , shootInt =0;
+    private TextField rightKey , leftKey, upKey, downKey , shootKey , reload;
+    private int rightInt=0 , leftInt=0 , upInt=0 , downInt=0 , shootInt =0 , reloadInt =0;
     private Image character, weapon;
-    private int characterCounter = 0;
-    private int weaponCounter = 0;
-    private int timeCounter = 0;
+    private int characterCounter = 1;
+    private int weaponCounter = 1;
+    private int timeCounter = 1;
     private double time = 0;
     private Weapons weaponType;
 
@@ -124,6 +124,12 @@ public class PreGameMenu implements Screen {
         keyboardTable.add(downKeyLabel).padRight(5);
         downKey = new TextField("", skin);
         keyboardTable.add(downKey).size(80, 40).padRight(10);
+
+        Label reloadLabel = new Label("Reload", skin);
+        reloadLabel.setFontScale(0.8f);
+        keyboardTable.add(reloadLabel).padRight(5);
+        reload = new TextField("", skin);
+        keyboardTable.add(reload).size(80, 40).padRight(10);
 
         Label shootKeyLabel = new Label("Shoot", skin);
         shootKeyLabel.setFontScale(0.8f);
@@ -228,6 +234,7 @@ public class PreGameMenu implements Screen {
                 if (rightInt!=0) newGame.setRightKey(rightInt);
                 if (leftInt!=0) newGame.setLeftKey(leftInt);
                 if (shootInt!=0) newGame.setShootKey(shootInt);
+                if (reloadInt!=0) newGame.setShootKey(reloadInt);
 
                 GameManager.setNewGame(newGame);
                 Weapon weapon1 = new Weapon(weaponType);

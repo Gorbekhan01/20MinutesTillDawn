@@ -5,17 +5,22 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import src.com.mygdx.game.Models.Enemies.EyeBat;
 import src.com.mygdx.game.Models.Enemies.TentacleMonster;
 import src.com.mygdx.game.Models.Enemies.Tree;
 import src.com.mygdx.game.Models.GameManager;
 import src.com.mygdx.game.Models.Menu;
 import src.com.mygdx.game.Models.Player;
 import src.com.mygdx.game.Models.Point;
+import box2dLight.PointLight;
+import box2dLight.RayHandler;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -29,16 +34,19 @@ public class MainGameScreen implements Screen {
     private Image backgroundImage;
     private Player player;
     private Set<Integer> pressedKeys = new HashSet<>();
-    private Label xpLabel, levelLabel, timeLabel , weaponLabel;
+    private Label xpLabel, levelLabel, timeLabel, weaponLabel;
     private ArrayList<Image> heartImages = new ArrayList<>();
     private ArrayList<Tree> trees = new ArrayList<>();
     private double time;
     private float timeAccumulator = 0;
     private int passedTime = 0;
-
+    private RayHandler rayHandler;
+    private PointLight playerLight;
+    private World world;
 
     @Override
     public void show() {
+        world = new World(new Vector2(0, -9.8f), true);
         camera = new OrthographicCamera();
         camera.setToOrtho(false, 800, 600);
         camera.zoom = 0.35f;
@@ -52,6 +60,11 @@ public class MainGameScreen implements Screen {
         backgroundImage = new Image(backgroundTexture);
         backgroundImage.setFillParent(true);
         stage.addActor(backgroundImage);
+
+        rayHandler = new RayHandler(world);
+        rayHandler.setAmbientLight(0.1f);
+        playerLight = new PointLight(rayHandler, 100, Color.WHITE, 300, 0, 0);
+        playerLight.setSoftnessLength(100);
 
         //health
         fixedStage = new Stage(new ScreenViewport());
@@ -71,8 +84,8 @@ public class MainGameScreen implements Screen {
         levelLabel.setPosition(400, Gdx.graphics.getHeight() - 50);
         timeLabel = new Label((int) time / 60 + ":" + time % 60, new Label.LabelStyle(GameManager.getFont(1), Color.WHITE));
         timeLabel.setPosition(600, Gdx.graphics.getHeight() - 50);
-        weaponLabel = new Label(GameManager.getNewGame().getPlayer().getWeapons().getAmmo()+ "/" +
-            GameManager.getNewGame().getPlayer().getWeapons().getWeapon().getAmmoMax() ,
+        weaponLabel = new Label(GameManager.getNewGame().getPlayer().getWeapons().getAmmo() + "/" +
+            GameManager.getNewGame().getPlayer().getWeapons().getWeapon().getAmmoMax(),
             new Label.LabelStyle(GameManager.getFont(1), Color.WHITE));
         weaponLabel.setPosition(750, Gdx.graphics.getHeight() - 50);
         fixedStage.addActor(xpLabel);
@@ -133,6 +146,8 @@ public class MainGameScreen implements Screen {
                     player.moveDown();
                 } else if (keycode == GameManager.getNewGame().getShootKey()) {
                     player.shoot();
+                } else if (keycode == GameManager.getNewGame().getReloadKey()) {
+                    player.getWeapons().setIsReloading(true);
                 } else if (keycode == Input.Keys.NUM_1) { // cheat code for time
                     time = 60;
                 } else if (keycode == Input.Keys.NUM_2) { // cheat code for health
@@ -187,17 +202,32 @@ public class MainGameScreen implements Screen {
                 return false;
             }
         });
+        create();
     }
 
+
+    public void create() {
+        rayHandler = new RayHandler(world);
+        rayHandler.setAmbientLight(0.2f);
+
+        playerLight = new PointLight(rayHandler, 50, Color.WHITE, 120, player.getPosition().x, player.getPosition().y);
+        playerLight.setSoftnessLength(50);
+        playerLight.setXray(false);
+    }
 
     @Override
 
     public void render(float delta) {
-        if (GameManager.getNewGame().isWasPaused()){
-            for (TentacleMonster monster:GameManager.getNewGame().getTentacleMonsters()){
+        world.step(delta, 6, 2);
+        playerLight.setPosition(player.getPosition().x, player.getPosition().y);
+        rayHandler.updateAndRender();
+        rayHandler.setCombinedMatrix(camera.combined);
+
+        if (GameManager.getNewGame().isWasPaused()) {
+            for (TentacleMonster monster : GameManager.getNewGame().getTentacleMonsters()) {
                 stage.addActor(monster.getMonsterImage());
             }
-            for (Tree tree:GameManager.getNewGame().getTrees()){
+            for (Tree tree : GameManager.getNewGame().getTrees()) {
                 stage.addActor(tree.getImage());
             }
             GameManager.getNewGame().setWasPaused(false);
@@ -226,12 +256,11 @@ public class MainGameScreen implements Screen {
         }
 
         // victory
-        if (time==0) {
+        if (time == 0) {
             GameManager.getNewGame().setResult("victory");
             GameManager.getNewGame().setSurvivedTime(passedTime);
             ((Game) Gdx.app.getApplicationListener()).setScreen(Menu.GAME_OVER.getScreen());
         }
-
 
 
         if (!player.isDamaged()) {
@@ -246,11 +275,23 @@ public class MainGameScreen implements Screen {
 
 
         if (passedTime % 4 == 0) {
-            int numberOfMonsters = (int) passedTime / 30 + 1;
+            int numberOfMonsters = (int) (passedTime / 30) + 1;
             spawnMonsters(numberOfMonsters);
         }
-
         for (TentacleMonster monster : GameManager.getNewGame().getTentacleMonsters()) {
+            monster.update(delta);
+        }
+
+        if (passedTime >= GameManager.getNewGame().getTime() * 60 / 4) {
+            if ((passedTime & 10) == 0) {
+                int numberOfMonsters = (int) (4 * passedTime - (int) GameManager.getNewGame().getTime() * 60 + 30) / 30;
+                spawnEyeBat(numberOfMonsters);
+            }
+        }
+        for (TentacleMonster monster : GameManager.getNewGame().getTentacleMonsters()) {
+            monster.update(delta);
+        }
+        for (EyeBat monster : GameManager.getNewGame().getEyeBat()) {
             monster.update(delta);
         }
 
@@ -281,8 +322,8 @@ public class MainGameScreen implements Screen {
         xpLabel.setPosition(280, Gdx.graphics.getHeight() - 50);
         levelLabel.setText("Level: " + player.getLevel());
         levelLabel.setPosition(400, Gdx.graphics.getHeight() - 50);
-        timeLabel.setText((int) time / 60 + ":" + (int) (time % 60) + "\nSurvived!");
-        weaponLabel.setText(GameManager.getNewGame().getPlayer().getWeapons().getAmmo()+ "/" +
+        timeLabel.setText((int) time / 60 + ":" + (int) (time % 60) + "\nSurvive!");
+        weaponLabel.setText(GameManager.getNewGame().getPlayer().getWeapons().getAmmo() + "/" +
             GameManager.getNewGame().getPlayer().getWeapons().getWeapon().getAmmoMax());
         weaponLabel.setPosition(750, Gdx.graphics.getHeight() - 50);
 
@@ -325,6 +366,34 @@ public class MainGameScreen implements Screen {
         }
     }
 
+    public void spawnEyeBat(int count) {
+
+        for (int i = 0; i < count; i++) {
+            int random = (int) (Math.random() * 4);
+            double x = 0;
+            double y = 0;
+            EyeBat monster = null;
+
+            if (random == 0) {
+                x = Math.random() * Gdx.graphics.getWidth();
+                monster = new EyeBat((int) x, 0);
+
+            } else if (random == 1) {
+                y = Math.random() * Gdx.graphics.getHeight();
+                monster = new EyeBat(0, (int) y);
+            } else if (random == 2) {
+                y = Math.random() * Gdx.graphics.getHeight();
+                monster = new EyeBat(Gdx.graphics.getWidth(), (int) y);
+            } else if (random == 3) {
+                x = Math.random() * Gdx.graphics.getWidth();
+                monster = new EyeBat((int) x, Gdx.graphics.getHeight());
+
+            }
+            GameManager.getNewGame().getEyeBat().add(monster);
+            stage.addActor(monster.getMonsterImage());
+        }
+    }
+
 
     @Override
     public void resize(int width, int height) {
@@ -351,5 +420,6 @@ public class MainGameScreen implements Screen {
         stage.dispose();
         backgroundTexture.dispose();
         fixedStage.dispose();
+        world.dispose();
     }
 }
