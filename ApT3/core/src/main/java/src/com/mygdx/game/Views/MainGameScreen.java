@@ -29,7 +29,7 @@ public class MainGameScreen implements Screen {
     private Image backgroundImage;
     private Player player;
     private Set<Integer> pressedKeys = new HashSet<>();
-    private Label xpLabel, levelLabel, timeLabel;
+    private Label xpLabel, levelLabel, timeLabel , weaponLabel;
     private ArrayList<Image> heartImages = new ArrayList<>();
     private ArrayList<Tree> trees = new ArrayList<>();
     private double time;
@@ -71,33 +71,39 @@ public class MainGameScreen implements Screen {
         levelLabel.setPosition(400, Gdx.graphics.getHeight() - 50);
         timeLabel = new Label((int) time / 60 + ":" + time % 60, new Label.LabelStyle(GameManager.getFont(1), Color.WHITE));
         timeLabel.setPosition(600, Gdx.graphics.getHeight() - 50);
+        weaponLabel = new Label(GameManager.getNewGame().getPlayer().getWeapons().getAmmo()+ "/" +
+            GameManager.getNewGame().getPlayer().getWeapons().getWeapon().getAmmoMax() ,
+            new Label.LabelStyle(GameManager.getFont(1), Color.WHITE));
+        weaponLabel.setPosition(750, Gdx.graphics.getHeight() - 50);
         fixedStage.addActor(xpLabel);
         fixedStage.addActor(levelLabel);
         fixedStage.addActor(timeLabel);
+        fixedStage.addActor(weaponLabel);
 
         // Trees
         int treeCount = (int) (Math.random() * 20);
-        for (int i = 0; i < treeCount; i++) {
-            int x = (int) (Math.random() * Gdx.graphics.getWidth() - 100);
-            int y = (int) (Math.random() * Gdx.graphics.getHeight() - 100);
-            boolean accepted = true;
-            Tree tree = new Tree(x, y);
-            for (Tree t : trees) {
-                if (tree.getBox().overlaps(t.getBox())) {
-                    accepted = false;
-                    break;
+        if (!GameManager.getNewGame().isWasPaused()) {
+            for (int i = 0; i < treeCount; i++) {
+                int x = (int) (Math.random() * Gdx.graphics.getWidth() - 100);
+                int y = (int) (Math.random() * Gdx.graphics.getHeight() - 100);
+                boolean accepted = true;
+                Tree tree = new Tree(x, y);
+                for (Tree t : trees) {
+                    if (tree.getBox().overlaps(t.getBox())) {
+                        accepted = false;
+                        break;
+                    }
+                }
+                if (accepted) {
+                    trees.add(tree);
+                    GameManager.getNewGame().getTrees().add(tree);
+                    Image image = tree.getImage();
+                    image.setPosition(x, y);
+                    stage.addActor(image);
+                    System.out.println("Tree " + tree.getBox().getX() + " " + tree.getBox().getY());
                 }
             }
-            if (accepted) {
-                trees.add(tree);
-                Texture texture = new Texture(tree.getImage());
-                Image image = new Image(texture);
-                image.setPosition(x, y);
-                stage.addActor(image);
-                System.out.println("Tree " + tree.getBox().getX() + " " + tree.getBox().getY());
-            }
         }
-
 
         stage.addActor(player.getPlayerImage());
 
@@ -127,6 +133,14 @@ public class MainGameScreen implements Screen {
                     player.moveDown();
                 } else if (keycode == GameManager.getNewGame().getShootKey()) {
                     player.shoot();
+                } else if (keycode == Input.Keys.NUM_1) { // cheat code for time
+                    time = 60;
+                } else if (keycode == Input.Keys.NUM_2) { // cheat code for health
+                    player.addHp(1);
+                } else if (keycode == Input.Keys.P) { // pause the game
+                    GameManager.getNewGame().setSurvivedTime(passedTime);
+                    GameManager.getNewGame().setSavedGame(MainGameScreen.this);
+                    ((Game) Gdx.app.getApplicationListener()).setScreen(Menu.PAUSE_MENU.getScreen());
                 }
                 return true;
             }
@@ -179,6 +193,15 @@ public class MainGameScreen implements Screen {
     @Override
 
     public void render(float delta) {
+        if (GameManager.getNewGame().isWasPaused()){
+            for (TentacleMonster monster:GameManager.getNewGame().getTentacleMonsters()){
+                stage.addActor(monster.getMonsterImage());
+            }
+            for (Tree tree:GameManager.getNewGame().getTrees()){
+                stage.addActor(tree.getImage());
+            }
+            GameManager.getNewGame().setWasPaused(false);
+        }
         GameManager.getNewGame().getTentacleMonsters().removeIf(TentacleMonster::isDead);
         GameManager.getNewGame().getPoints().removeIf(Point::getVisible);
 
@@ -195,22 +218,35 @@ public class MainGameScreen implements Screen {
             passedTime += 1;
         }
 
+        // dead
+        if (player.getHP() <= 0) {
+            GameManager.getNewGame().setResult("dead");
+            GameManager.getNewGame().setSurvivedTime(passedTime);
+            ((Game) Gdx.app.getApplicationListener()).setScreen(Menu.GAME_OVER.getScreen());
+        }
+
+        // victory
+        if (time==0) {
+            GameManager.getNewGame().setResult("victory");
+            GameManager.getNewGame().setSurvivedTime(passedTime);
+            ((Game) Gdx.app.getApplicationListener()).setScreen(Menu.GAME_OVER.getScreen());
+        }
+
+
+
         if (!player.isDamaged()) {
             for (Tree tree : trees) {
                 if (player.getBox().overlaps(tree.getBox())) {
                     player.setHP();
                     player.setDamaged(true);
                     player.setInvincibleTimer(1.5f);
-                    if (player.getHP() <= 0) {
-                        ((Game) Gdx.app.getApplicationListener()).setScreen(Menu.GAME_OVER.getScreen());
-                    }
                 }
             }
         }
 
 
-        if (passedTime % 3 == 0) {
-            int numberOfMonsters = (int) passedTime / 10;
+        if (passedTime % 4 == 0) {
+            int numberOfMonsters = (int) passedTime / 30 + 1;
             spawnMonsters(numberOfMonsters);
         }
 
@@ -243,9 +279,12 @@ public class MainGameScreen implements Screen {
 
         xpLabel.setText("XP: " + player.getXP());
         xpLabel.setPosition(280, Gdx.graphics.getHeight() - 50);
-        levelLabel.setText("Level: " + player.getXP());
+        levelLabel.setText("Level: " + player.getLevel());
         levelLabel.setPosition(400, Gdx.graphics.getHeight() - 50);
         timeLabel.setText((int) time / 60 + ":" + (int) (time % 60) + "\nSurvived!");
+        weaponLabel.setText(GameManager.getNewGame().getPlayer().getWeapons().getAmmo()+ "/" +
+            GameManager.getNewGame().getPlayer().getWeapons().getWeapon().getAmmoMax());
+        weaponLabel.setPosition(750, Gdx.graphics.getHeight() - 50);
 
         camera.position.set(player.getPlayerImage().getX() + player.getPlayerImage().getWidth() / 2,
             player.getPlayerImage().getY() + player.getPlayerImage().getHeight() / 2, 0);
@@ -283,7 +322,6 @@ public class MainGameScreen implements Screen {
             }
             GameManager.getNewGame().getTentacleMonsters().add(monster);
             stage.addActor(monster.getMonsterImage());
-
         }
     }
 

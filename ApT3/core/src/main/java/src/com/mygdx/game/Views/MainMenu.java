@@ -118,6 +118,13 @@ public class MainMenu implements Screen {
             }
         });
 
+        scoreBoardButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                ((Game) Gdx.app.getApplicationListener()).setScreen(Menu.SCOREBOARD_MENU.getScreen());
+            }
+        });
+
 
     }
 

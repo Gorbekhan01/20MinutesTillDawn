@@ -29,6 +29,7 @@ public class Player {
     private Rectangle box;
     private float invincibleTimer = 0;
     private boolean damaged = false;
+    private int killCount = 0;
 
     public void initializePlayer() {
         walkFrames = new Texture[hero.getImages().length];
@@ -47,7 +48,7 @@ public class Player {
         velocity = new Vector2(0, 0);
 
         playerImage = new Image(new TextureRegionDrawable(regions[0]));
-        playerImage.setSize(15,20);
+        playerImage.setSize(15, 20);
         playerImage.setPosition(position.x, position.y);
         box = new Rectangle(position.x, position.y, playerImage.getImageWidth(), playerImage.getImageHeight());
 
@@ -113,14 +114,25 @@ public class Player {
 
         playerImage.setPosition(position.x, position.y);
         box.setPosition(position.x, position.y);
-        weapon.update(position);
+        weapon.update(delta);
 
-        for (Point point  : GameManager.getNewGame().getPoints()) {
+        for (Point point : GameManager.getNewGame().getPoints()) {
             if (Intersector.overlaps(box, point.getBox())) {
                 point.setVisible(true);
                 setXP(3);
                 point.getImageBox().remove();
                 break;
+            }
+        }
+
+        if (!damaged) {
+            for (TentacleMonster monster : GameManager.getNewGame().getTentacleMonsters()) {
+                if (Intersector.overlaps(box, monster.getBox())) {
+                    HP -= 1;
+                    damaged = true;
+                    invincibleTimer = 2f;
+                    break;
+                }
             }
         }
 
@@ -141,12 +153,18 @@ public class Player {
 
 
     public void shoot() {
-        Vector2 bulletDirection = new Vector2((float) Math.cos(Math.toRadians(weapon.getWeaponImage().getRotation())),
-            (float) Math.sin(Math.toRadians(weapon.getWeaponImage().getRotation())));
+        if (weapon.getAmmo() < 0) {
+            weapon.setIsReloading(true);
+        }
+        if (!weapon.isReloading()) {
+            Vector2 bulletDirection = new Vector2((float) Math.cos(Math.toRadians(weapon.getWeaponImage().getRotation())),
+                (float) Math.sin(Math.toRadians(weapon.getWeaponImage().getRotation())));
 
-        Bullet bullet = new Bullet(new Vector2(position.x, position.y), bulletDirection);
-        GameManager.getNewGame().getGameStage().addActor(bullet);
-        GameManager.getNewGame().getBullets().add(bullet);
+            Bullet bullet = new Bullet(new Vector2(position.x, position.y), bulletDirection);
+            GameManager.getNewGame().getGameStage().addActor(bullet);
+            GameManager.getNewGame().getBullets().add(bullet);
+            weapon.setAmmo(1);
+        }
     }
 
     public Image getPlayerImage() {
@@ -177,11 +195,18 @@ public class Player {
     }
 
     public int getHP() {
-        return HP;
+        return Math.max(HP, 0);
     }
 
     public void setHP() {
         HP--;
+    }
+
+    public void addHp(int amount) {
+        HP += amount;
+        if (HP >= hero.getHP()) {
+            HP = hero.getHP();
+        }
     }
 
     public int getLevel() {
@@ -222,6 +247,14 @@ public class Player {
 
     public Vector2 getPosition() {
         return position;
+    }
+
+    public int getKillCount() {
+        return killCount;
+    }
+
+    public void setKillCount() {
+        killCount++;
     }
 }
 

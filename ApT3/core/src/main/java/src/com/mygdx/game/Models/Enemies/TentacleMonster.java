@@ -23,11 +23,11 @@ public class TentacleMonster {
 
     private String[] images = new String[]{
         "enemies/TentacleMonster/1.png",
-        "enemies/TentacleMonster/2.png",
-        "enemies/TentacleMonster/3.png",
-        "enemies/TentacleMonster/4.png",
-        "enemies/TentacleMonster/5.png",
-        "enemies/TentacleMonster/6.png"
+//        "enemies/TentacleMonster/2.png",
+//        "enemies/TentacleMonster/3.png",
+//        "enemies/TentacleMonster/4.png",
+//        "enemies/TentacleMonster/5.png",
+//        "enemies/TentacleMonster/6.png"
     };
 
     public TentacleMonster(int startX, int startY) {
@@ -58,13 +58,22 @@ public class TentacleMonster {
 
         if (Hp == 0) {
             isDead = true;
+            // killed by player
+            GameManager.getNewGame().getPlayer().setKillCount();
             monsterImage.remove();
             Point point = new Point(position.x, position.y);
             GameManager.getNewGame().getPoints().add(point);
             GameManager.getNewGame().getGameStage().addActor(point.getImageBox());
+            this.dispose();
         }
-        this.dispose();
-        monsterImage.setPosition(position.x, position.y);
+
+        if (direction.x < 0) {
+            monsterImage.setScale(-1, 1);
+        } else {
+            monsterImage.setScale(1, 1);
+        }
+
+            monsterImage.setPosition(position.x, position.y);
         monsterImage.setDrawable(new TextureRegionDrawable(walkAnimation.getKeyFrame(stateTime, true)));
 
     }

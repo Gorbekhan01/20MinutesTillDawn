@@ -15,7 +15,7 @@ public class Point {
 
     public Point(float x, float y) {
         this.position = new Vector2(x, y);
-        this.box = new Rectangle(position.x, position.y, 10, 10);
+        this.box = new Rectangle(position.x, position.y, 35, 35);
         this.texture = new Texture(image);
         this.imageBox = new Image(texture);
         imageBox.setSize(2,2);
