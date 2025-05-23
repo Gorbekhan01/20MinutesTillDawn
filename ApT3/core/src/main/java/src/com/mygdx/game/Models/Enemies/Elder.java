@@ -12,7 +12,7 @@ import src.com.mygdx.game.Models.Point;
 
 public class Elder {
     private Vector2 position;
-    private int Hp = 400;
+    private int Hp = 600;
     private float normalSpeed = 20f;
     private float dashSpeedMultiplier = 260f;
     private float dashTime = 5f;

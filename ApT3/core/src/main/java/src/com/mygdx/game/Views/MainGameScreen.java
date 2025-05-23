@@ -57,7 +57,11 @@ public class MainGameScreen implements Screen {
         camera = new OrthographicCamera();
         camera.setToOrtho(false, 800, 600);
         camera.zoom = 0.35f;
+        passedTime =0 ;
         time = GameManager.getNewGame().getTime() * 60;
+        System.out.println(time);
+        System.out.println(GameManager.getNewGame().getTime());
+        System.out.println("PAss"+ passedTime);
         viewport = new ScreenViewport(camera);
         stage = new Stage(viewport);
         GameManager.getNewGame().setGameStage(stage);

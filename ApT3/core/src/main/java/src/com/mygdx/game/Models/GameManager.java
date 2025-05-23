@@ -43,7 +43,7 @@ public class GameManager {
     }
 
     private static Music currentMusic;
-    private static boolean SFX = true;
+    private static boolean SFX = false;
 
     public static MainGame getGame() {
         return game;
@@ -170,6 +170,8 @@ public class GameManager {
 
     public static void playSound(String address) {
         sound = Gdx.audio.newSound(Gdx.files.internal(address));
-        sound.play();
+        if (SFX) {
+            sound.play();
+        }
     }
 }

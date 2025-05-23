@@ -64,10 +64,6 @@ public class SettingMenu implements Screen {
         mainTable.add(checkBox).width(200).padTop(20).row();
         backButton = new TextButton("back", skin);
         mainTable.add(backButton).width(200).padTop(20).row();
-
-
-        // -- > keyboard customization
-
         stage.addActor(mainTable);
     }
 

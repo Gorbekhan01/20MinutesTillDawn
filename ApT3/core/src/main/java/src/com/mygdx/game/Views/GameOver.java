@@ -29,6 +29,7 @@ public class GameOver implements Screen {
         Gdx.input.setInputProcessor(stage);
         if (GameManager.getNewGame().getResult().equals("victory")) {
             resultLabel = new Label("Victory!", new Label.LabelStyle(GameManager.getFont(1), Color.WHITE));
+            resultLabel.setColor(Color.GREEN);
         } else if (GameManager.getNewGame().getResult().equals("dead")) {
             resultLabel = new Label("You Died", new Label.LabelStyle(GameManager.getFont(1), Color.WHITE));
         }

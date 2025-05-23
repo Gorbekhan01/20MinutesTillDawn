@@ -25,9 +25,9 @@ public class PreGameMenu implements Screen {
     private TextField rightKey , leftKey, upKey, downKey , shootKey , reload;
     private int rightInt=0 , leftInt=0 , upInt=0 , downInt=0 , shootInt =0 , reloadInt =0;
     private Image character, weapon;
-    private int characterCounter = 1;
-    private int weaponCounter = 1;
-    private int timeCounter = 1;
+    private int characterCounter = 0;
+    private int weaponCounter = 0;
+    private int timeCounter = 0;
     private double time = 0;
     private Weapons weaponType;
     private Player player;
@@ -44,6 +44,7 @@ public class PreGameMenu implements Screen {
         timeName = new Label("", skin);
         preGameMenuCreator();
         player = new Player();
+        weaponType = Weapons.DUAL_SMGs;
     }
 
     public void preGameMenuCreator() {
@@ -57,7 +58,12 @@ public class PreGameMenu implements Screen {
         characterName.setFontScale(0.8f);
         charactersLabel.setAlignment(Align.center);
         charactersTable.add(charactersLabel).colspan(3).center().padTop(10).row();
+        // show first character
         character = new Image();
+        Texture avatarTexture = new Texture(Gdx.files.internal(GameManager.getHeroes().get(characterCounter)));
+        character.setDrawable(new Image(avatarTexture).getDrawable());
+        characterName.setText("Dasher");
+
         prevCBotton = new TextButton("<", skin);
         nextCBotton = new TextButton(">", skin);
 
@@ -73,7 +79,14 @@ public class PreGameMenu implements Screen {
         weaponsLabel.setAlignment(Align.center);
         weaponName.setFontScale(0.8f);
         weaponTable.add(weaponsLabel).colspan(3).center().padTop(10).row();
+
+        // show first weapon
         weapon = new Image();
+        Texture avatarTextureTemp = new Texture(Gdx.files.internal(GameManager.getWeapons().get(weaponCounter)));
+        weapon.setDrawable(new Image(avatarTextureTemp).getDrawable());
+        weaponName.setText("Dual SMGs");
+
+
         prevWBotton = new TextButton("<", skin);
         nextWBotton = new TextButton(">", skin);
 
@@ -92,6 +105,10 @@ public class PreGameMenu implements Screen {
         timeTable.add(timeLabel).colspan(3).center().padTop(10).row();
         prevTBotton = new TextButton("<", skin);
         nextTBotton = new TextButton(">", skin);
+
+        // show first time
+        time = 2.5;
+        timeName.setText("2.5 min");
 
         timeTable.add(prevTBotton).size(80, 80).padRight(10);
         timeTable.add(timeName).size(80, 80);
@@ -119,25 +136,25 @@ public class PreGameMenu implements Screen {
         upKeyLabel.setFontScale(0.8f);
         keyboardTable.add(upKeyLabel).padRight(5);
         upKey = new TextField("", skin);
-        keyboardTable.add(upKey).size(80, 40).padRight(10);
+        keyboardTable.add(upKey).size(80, 40).padRight(10).row();
 
         Label downKeyLabel = new Label("Down", skin);
         downKeyLabel.setFontScale(0.8f);
         keyboardTable.add(downKeyLabel).padRight(5);
         downKey = new TextField("", skin);
-        keyboardTable.add(downKey).size(80, 40).padRight(10);
+        keyboardTable.add(downKey).size(80, 40).padRight(10).padTop(10);
 
         Label reloadLabel = new Label("Reload", skin);
         reloadLabel.setFontScale(0.8f);
         keyboardTable.add(reloadLabel).padRight(5);
         reload = new TextField("", skin);
-        keyboardTable.add(reload).size(80, 40).padRight(10);
+        keyboardTable.add(reload).size(80, 40).padRight(10).padTop(10);
 
         Label shootKeyLabel = new Label("Shoot", skin);
         shootKeyLabel.setFontScale(0.8f);
         keyboardTable.add(shootKeyLabel).padRight(5);
         shootKey = new TextField("", skin);
-        keyboardTable.add(shootKey).size(80, 40);
+        keyboardTable.add(shootKey).size(80, 40).padTop(10);
 
         mainTable.add(keyboardTable).width(stage.getWidth() * 0.8f).padTop(20).center().row();
 
