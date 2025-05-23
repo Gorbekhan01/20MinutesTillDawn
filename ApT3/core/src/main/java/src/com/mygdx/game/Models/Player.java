@@ -17,6 +17,7 @@ import src.com.mygdx.game.Models.Enemies.TentacleMonster;
 import src.com.mygdx.game.Models.Enums.Heroes;
 import src.com.mygdx.game.Models.Enums.Weapons;
 
+import java.util.ArrayList;
 import java.util.logging.Level;
 
 public class Player {
@@ -30,12 +31,16 @@ public class Player {
     private Heroes hero = Heroes.DASHER;
     private Weapon weapon = null;
     private int HP = 0;
+    private int maxHP = 0;
     private int level = 0;
     private int XP = 0;
+    private int XP4Level = 0;
     private Rectangle box;
     private float invincibleTimer = 0;
     private boolean damaged = false;
     private int killCount = 0;
+    private ArrayList<Ability> abilities = new ArrayList<>();
+    private int maxSpeed;
 
 
     public void initializePlayer() {
@@ -60,49 +65,51 @@ public class Player {
         playerImage.setPosition(position.x, position.y);
         box = new Rectangle(position.x, position.y, playerImage.getImageWidth(), playerImage.getImageHeight());
         XP = 0;
-        level =0;
+        level = 0;
+        maxHP = hero.getHP();
+        maxSpeed = hero.getSpeed();
 
     }
 
     public void moveLeft() {
-        velocity.set(-40 * hero.getSpeed(), 0);
+        velocity.set(-40 * maxSpeed, 0);
         isMoving = true;
         playerImage.setScale(-1, 1);
     }
 
     public void moveRight() {
-        velocity.set(40 * hero.getSpeed(), 0);
+        velocity.set(40 * maxSpeed, 0);
         isMoving = true;
         playerImage.setScale(1, 1);
     }
 
     public void moveUp() {
-        velocity.set(0, 40 * hero.getSpeed());
+        velocity.set(0, 40 * maxSpeed);
         isMoving = true;
     }
 
     public void moveDown() {
-        velocity.set(0, -40 * hero.getSpeed());
+        velocity.set(0, -40 * maxSpeed);
         isMoving = true;
     }
 
     public void moveUpRight() {
-        velocity.set(20 * hero.getSpeed(), 20 * hero.getSpeed());
+        velocity.set(20 * maxSpeed, 20 * maxSpeed);
         isMoving = true;
     }
 
     public void moveUpLeft() {
-        velocity.set(-20 * hero.getSpeed(), 20 * hero.getSpeed());
+        velocity.set(-20 * maxSpeed, 20 * maxSpeed);
         isMoving = true;
     }
 
     public void moveDownRight() {
-        velocity.set(20 * hero.getSpeed(), -20 * hero.getSpeed());
+        velocity.set(20 * maxSpeed, -20 * maxSpeed);
         isMoving = true;
     }
 
     public void moveDownLeft() {
-        velocity.set(-20 * hero.getSpeed(), -20 * hero.getSpeed());
+        velocity.set(-20 * maxSpeed, -20 * maxSpeed);
         isMoving = true;
     }
 
@@ -131,6 +138,7 @@ public class Player {
                 GameManager.playSound("sounds/point.wav");
                 point.setVisible(true);
                 setXP(3);
+                setXP4Level(3);
                 point.getImageBox().remove();
                 break;
             }
@@ -141,7 +149,7 @@ public class Player {
                 if (Intersector.overlaps(box, monster.getBox()) && !monster.isDead()) {
                     HP -= 1;
                     damaged = true;
-                    position = new Vector2(this.getPosition().x+5, this.getPosition().y+5);
+                    position = new Vector2(this.getPosition().x + 5, this.getPosition().y + 5);
                     invincibleTimer = 2f;
                     break;
                 }
@@ -153,7 +161,7 @@ public class Player {
                 if (Intersector.overlaps(box, monster.getBox()) && !monster.isDead()) {
                     HP -= 1;
                     damaged = true;
-                    position = new Vector2(this.getPosition().x+5, this.getPosition().y+5);
+                    position = new Vector2(this.getPosition().x + 5, this.getPosition().y + 5);
                     invincibleTimer = 2f;
                     break;
                 }
@@ -165,7 +173,7 @@ public class Player {
                 if (Intersector.overlaps(box, monster.getBox()) && !monster.isDead()) {
                     HP -= 1;
                     damaged = true;
-                    position = new Vector2(this.getPosition().x+5, this.getPosition().y+5);
+                    position = new Vector2(this.getPosition().x + 5, this.getPosition().y + 5);
                     invincibleTimer = 2f;
                     break;
                 }
@@ -197,9 +205,11 @@ public class Player {
             Vector2 bulletDirection = new Vector2((float) Math.cos(Math.toRadians(weapon.getWeaponImage().getRotation())),
                 (float) Math.sin(Math.toRadians(weapon.getWeaponImage().getRotation())));
 
-            Bullet bullet = new Bullet(new Vector2(position.x, position.y), bulletDirection,false);
-            GameManager.getNewGame().getGameStage().addActor(bullet);
-            GameManager.getNewGame().getBullets().add(bullet);
+            for (int i = 0; i < weapon.getProjectile(); i++) {
+                Bullet bullet = new Bullet(new Vector2(position.x + i * 10, position.y + i * 10), bulletDirection, false);
+                GameManager.getNewGame().getGameStage().addActor(bullet);
+                GameManager.getNewGame().getBullets().add(bullet);
+            }
             weapon.setAmmo(1);
         }
     }
@@ -292,6 +302,42 @@ public class Player {
 
     public void setKillCount() {
         killCount++;
+    }
+
+    public ArrayList<Ability> getAbilities() {
+        return abilities;
+    }
+
+    public int getMaxHP() {
+        return maxHP;
+    }
+
+    public void addMaxHP(int add) {
+        maxHP += add;
+    }
+
+    public int getMaxSpeed() {
+        return maxSpeed;
+    }
+
+    public void addMaxSpeed() {
+        maxSpeed = maxSpeed * 2;
+    }
+
+    public void decreaseMaxSpeed() {
+        maxSpeed = maxSpeed / 2;
+    }
+
+    public int getXP4Level(){
+        return XP4Level;
+    }
+
+    public void setXP4Level(int XP4Level) {
+        this.XP4Level += XP4Level;
+    }
+
+    public void resetXP4Level(){
+        XP4Level = 0;
     }
 }
 

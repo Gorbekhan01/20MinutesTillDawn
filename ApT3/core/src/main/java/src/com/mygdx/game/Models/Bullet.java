@@ -38,7 +38,7 @@ public class Bullet extends Actor {
         if (isEyeBat) {
             this.velocity = direction.nor().scl(60);
         } else {
-            this.velocity = direction.nor().scl(500);
+            this.velocity = direction.nor().scl(250);
         }
         stage.addActor(bulletImage);
         this.isEyebat = isEyeBat;

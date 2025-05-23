@@ -12,7 +12,7 @@ import src.com.mygdx.game.Models.Point;
 
 public class Elder {
     private Vector2 position;
-    private int Hp = 600;
+    private int Hp = 4000;
     private float normalSpeed = 20f;
     private float dashSpeedMultiplier = 260f;
     private float dashTime = 5f;
@@ -26,14 +26,17 @@ public class Elder {
     private Vector2 savedPosition = new Vector2();
 
     private String[] images = new String[]{
-            "enemies/elder/1.png",
+        "enemies/elder/1.png",
     };
 
     private String[] explosionImages = new String[]{
-            "enemies/explosion/1.png",
-            "enemies/explosion/2.png",
-            "enemies/explosion/3.png",
-            "enemies/explosion/4.png"
+        "enemies/explosion/elderExplosion/1.png",
+        "enemies/explosion/elderExplosion/2.png",
+        "enemies/explosion/elderExplosion/3.png",
+        "enemies/explosion/elderExplosion/4.png",
+        "enemies/explosion/elderExplosion/5.png",
+        "enemies/explosion/elderExplosion/6.png"
+
     };
 
     public Elder(int startX, int startY) {
@@ -84,7 +87,7 @@ public class Elder {
         if (!isDashing && dashTimer >= dashTime) {
             isDashing = true;
             savedPosition = new Vector2(GameManager.getNewGame().getPlayer().getPosition().x + 5
-                    , GameManager.getNewGame().getPlayer().getPosition().y + 5);
+                , GameManager.getNewGame().getPlayer().getPosition().y + 5);
             dashTimer = 0;
         }
 

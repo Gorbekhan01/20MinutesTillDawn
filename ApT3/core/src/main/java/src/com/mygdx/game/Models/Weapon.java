@@ -23,8 +23,9 @@ public class Weapon {
     private int ammo;
     private boolean isReloading = false;
     private float reloadTimer = 0f;
+    private int projectile;
 
-    private String[] reloadingImages = new String[] {
+    private String[] reloadingImages = new String[]{
         "weapons/reloadWeapon/1.png",
         "weapons/reloadWeapon/2.png",
         "weapons/reloadWeapon/3.png",
@@ -45,6 +46,7 @@ public class Weapon {
         ammo = maxAmmo;
         reloadTime = weapons.getReloadTime();
         initializeAnimation();
+        projectile = weapons.getProjectile();
     }
 
     private void initializeAnimation() {
@@ -73,7 +75,7 @@ public class Weapon {
             weaponImage.setDrawable(new TextureRegionDrawable(reloadAnimation.getKeyFrame(stateTime, true)));
 
             if (reloadTimer >= reloadTime) {
-                ammo = maxAmmo;
+                ammo = this.getMaxAmmo();
                 isReloading = false;
                 reloadTimer = 0f;
                 weaponImage.setDrawable(new TextureRegionDrawable(new TextureRegion(weaponTexture)));
@@ -132,5 +134,29 @@ public class Weapon {
 
     public void setIsReloading(boolean isReloading) {
         this.isReloading = isReloading;
+    }
+
+    public int getProjectile() {
+        return projectile;
+    }
+
+    public void addProjectile() {
+        projectile++;
+    }
+
+    public int getMaxAmmo() {
+        return maxAmmo;
+    }
+
+    public void addMaxAmmo(int add) {
+        maxAmmo += add;
+    }
+
+    public void addDamage() {
+        damage = (int) (damage * 1.25f);
+    }
+
+    public void decreaseDamage() {
+        damage = (int) (damage * 0.8f);
     }
 }

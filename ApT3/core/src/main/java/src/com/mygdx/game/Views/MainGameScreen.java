@@ -5,21 +5,21 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import src.com.mygdx.game.Models.*;
 import src.com.mygdx.game.Models.Enemies.Elder;
 import src.com.mygdx.game.Models.Enemies.EyeBat;
 import src.com.mygdx.game.Models.Enemies.TentacleMonster;
 import src.com.mygdx.game.Models.Enemies.Tree;
-import src.com.mygdx.game.Models.GameManager;
-import src.com.mygdx.game.Models.Menu;
-import src.com.mygdx.game.Models.Player;
-import src.com.mygdx.game.Models.Point;
 import box2dLight.PointLight;
 import box2dLight.RayHandler;
 
@@ -35,7 +35,7 @@ public class MainGameScreen implements Screen {
     private Image backgroundImage;
     private Player player;
     private Set<Integer> pressedKeys = new HashSet<>();
-    private Label xpLabel, levelLabel, timeLabel, weaponLabel;
+    private Label xpLabel, timeLabel, weaponLabel;
     private ArrayList<Image> heartImages = new ArrayList<>();
     private ArrayList<Tree> trees = new ArrayList<>();
     private double time;
@@ -50,6 +50,7 @@ public class MainGameScreen implements Screen {
     private float getLasTimeSpawnedEyebat = 0;
     private boolean firstTimeSpawnedTentacle = true;
     private boolean firstTimeSpawnedEyebat = true;
+    ShapeRenderer shapeRenderer = new ShapeRenderer();
 
     @Override
     public void show() {
@@ -57,11 +58,11 @@ public class MainGameScreen implements Screen {
         camera = new OrthographicCamera();
         camera.setToOrtho(false, 800, 600);
         camera.zoom = 0.35f;
-        passedTime =0 ;
+        passedTime = 0;
         time = GameManager.getNewGame().getTime() * 60;
         System.out.println(time);
         System.out.println(GameManager.getNewGame().getTime());
-        System.out.println("PAss"+ passedTime);
+        System.out.println("PAss" + passedTime);
         viewport = new ScreenViewport(camera);
         stage = new Stage(viewport);
         GameManager.getNewGame().setGameStage(stage);
@@ -80,36 +81,33 @@ public class MainGameScreen implements Screen {
         //health
         fixedStage = new Stage(new ScreenViewport());
 
-        for (int i = 1; i <= player.getHero().getHP(); i++) {
+        for (int i = 1; i <= player.getMaxHP(); i++) {
             Texture texture = new Texture("others/RedHeart.png");
             Image image = new Image(texture);
-            image.setPosition(20 + (i * 30), Gdx.graphics.getHeight() - 50);
+            image.setPosition(20 + (i * 30), Gdx.graphics.getHeight() - 70);
             fixedStage.addActor(image);
             heartImages.add(image);
         }
 
         // XP & Level
         xpLabel = new Label("XP: " + player.getXP(), new Label.LabelStyle(GameManager.getFont(1), Color.WHITE));
-        xpLabel.setPosition(280, Gdx.graphics.getHeight() - 50);
-        levelLabel = new Label("Level: " + player.getLevel(), new Label.LabelStyle(GameManager.getFont(1), Color.WHITE));
-        levelLabel.setPosition(400, Gdx.graphics.getHeight() - 50);
+        xpLabel.setPosition(280, Gdx.graphics.getHeight() - 70);
         timeLabel = new Label((int) time / 60 + ":" + time % 60, new Label.LabelStyle(GameManager.getFont(1), Color.WHITE));
-        timeLabel.setPosition(600, Gdx.graphics.getHeight() - 50);
+        timeLabel.setPosition(600, Gdx.graphics.getHeight() - 70);
         weaponLabel = new Label(GameManager.getNewGame().getPlayer().getWeapons().getAmmo() + "/" +
-            GameManager.getNewGame().getPlayer().getWeapons().getWeapon().getAmmoMax(),
+            GameManager.getNewGame().getPlayer().getWeapons().getMaxAmmo(),
             new Label.LabelStyle(GameManager.getFont(1), Color.WHITE));
-        weaponLabel.setPosition(750, Gdx.graphics.getHeight() - 50);
+        weaponLabel.setPosition(750, Gdx.graphics.getHeight() - 70);
         fixedStage.addActor(xpLabel);
-        fixedStage.addActor(levelLabel);
         fixedStage.addActor(timeLabel);
         fixedStage.addActor(weaponLabel);
 
         // Trees
-        int treeCount = (int) (Math.random() * 20);
+        int treeCount = (int) (Math.random() * 18) + 2;
         if (!GameManager.getNewGame().isWasPaused()) {
             for (int i = 0; i < treeCount; i++) {
-                int x = (int) (Math.random() * Gdx.graphics.getWidth() - 100);
-                int y = (int) (Math.random() * Gdx.graphics.getHeight() - 100);
+                int x = (int) (Math.random() * Gdx.graphics.getWidth() - 200);
+                int y = (int) (Math.random() * Gdx.graphics.getHeight() - 200);
                 boolean accepted = true;
                 Tree tree = new Tree(x, y);
                 for (Tree t : trees) {
@@ -175,7 +173,9 @@ public class MainGameScreen implements Screen {
                     ((Game) Gdx.app.getApplicationListener()).setScreen(Menu.PAUSE_MENU.getScreen());
                 }
                 return true;
+
             }
+
 
             @Override
             public boolean keyUp(int keycode) {
@@ -221,7 +221,60 @@ public class MainGameScreen implements Screen {
         });
         create();
         totalTime = GameManager.getNewGame().getTime() * 60;
+
     }
+
+    public void addProgressBarToStage() {
+        int currentXP = player.getXP4Level();
+        int maxXP = (player.getLevel() + 1) * 20;
+        Actor progressBar = new Actor() {
+            private ShapeRenderer shapeRenderer = new ShapeRenderer();
+
+            @Override
+            public void draw(Batch batch, float parentAlpha) {
+
+                float progress = Math.min((float) currentXP / maxXP, 1.0f);
+
+                batch.end();
+
+                shapeRenderer.setProjectionMatrix(getStage().getCamera().combined);
+                shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+
+                shapeRenderer.setColor(Color.GRAY);
+                shapeRenderer.rect(getX(), getY(), getWidth(), getHeight());
+
+                if (progress > 0) {
+                    shapeRenderer.setColor(Color.DARK_GRAY);
+                    shapeRenderer.rect(getX(), getY(), getWidth() * progress, getHeight());
+                }
+
+                shapeRenderer.end();
+
+                batch.begin();
+            }
+        };
+
+        if (currentXP >= maxXP) {
+            player.setLevel();
+            player.resetXP4Level();
+            GameManager.getNewGame().setSurvivedTime(passedTime);
+            GameManager.getNewGame().setSavedGame(MainGameScreen.this);
+            stage.clear();
+            fixedStage.clear();
+            ((Game) Gdx.app.getApplicationListener()).setScreen(Menu.ABILITY_MENU.getScreen());
+        }
+
+        progressBar.setPosition(0, Gdx.graphics.getHeight() - 30);
+        Label label = new Label("Level "+ player.getLevel(), new Label.LabelStyle(GameManager.getFont(1), Color.WHITE));
+        label.setPosition(Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight() - 30);
+        label.setFontScale(0.8f);
+        progressBar.setSize(Gdx.graphics.getWidth(), 40);
+
+        fixedStage.addActor(progressBar);
+        fixedStage.addActor(label);
+    }
+
+
 
 
     public void create() {
@@ -236,22 +289,32 @@ public class MainGameScreen implements Screen {
     @Override
 
     public void render(float delta) {
+        addProgressBarToStage();
         world.step(delta, 6, 2);
         playerLight.setPosition(player.getPosition().x, player.getPosition().y);
         rayHandler.updateAndRender();
         rayHandler.setCombinedMatrix(camera.combined);
 
         if (GameManager.getNewGame().isWasPaused()) {
+            GameManager.getNewGame().getEyeBat().removeIf(EyeBat::isDead);
+            GameManager.getNewGame().getTentacleMonsters().removeIf(TentacleMonster::isDead);
+            GameManager.getNewGame().getElder().removeIf(Elder::isDead);
+
             for (TentacleMonster monster : GameManager.getNewGame().getTentacleMonsters()) {
                 stage.addActor(monster.getMonsterImage());
             }
             for (Tree tree : GameManager.getNewGame().getTrees()) {
                 stage.addActor(tree.getImage());
             }
+            for (EyeBat eyeBat : GameManager.getNewGame().getEyeBat()) {
+                stage.addActor(eyeBat.getMonsterImage());
+            }
+            for (Elder elder : GameManager.getNewGame().getElder()) {
+                stage.addActor(elder.getMonsterImage());
+            }
             GameManager.getNewGame().setWasPaused(false);
         }
         GameManager.getNewGame().getPoints().removeIf(Point::getVisible);
-
 
 
         player.update(delta);
@@ -265,6 +328,9 @@ public class MainGameScreen implements Screen {
             time -= 1;
             timeAccumulator = 0;
             passedTime += 1;
+            for (Ability ability : player.getAbilities()) {
+                ability.update();
+            }
         }
 
         // dead
@@ -385,17 +451,17 @@ public class MainGameScreen implements Screen {
         for (int i = 1; i <= player.getHP(); i++) {
             Texture texture = new Texture("others/RedHeart.png");
             Image image = new Image(texture);
-            image.setPosition(20 + (i * 30), Gdx.graphics.getHeight() - 50);
+            image.setPosition(20 + (i * 30), Gdx.graphics.getHeight() - 70);
             lastInt = i;
             fixedStage.addActor(image);
             heartImages.add(image);
         }
 
-        if (player.getHP() - player.getHero().getHP() != 0) {
+        if (player.getHP() - player.getMaxHP() != 0) {
             for (int i = 1; i <= Math.abs(player.getHero().getHP() - player.getHP()); i++) {
                 Texture texture = new Texture("others/BlackHeart.png");
                 Image image = new Image(texture);
-                image.setPosition(20 + ((i + lastInt) * 30), Gdx.graphics.getHeight() - 50);
+                image.setPosition(20 + ((i + lastInt) * 30), Gdx.graphics.getHeight() - 70);
                 fixedStage.addActor(image);
                 heartImages.add(image);
             }
@@ -403,13 +469,11 @@ public class MainGameScreen implements Screen {
 
 
         xpLabel.setText("XP: " + player.getXP());
-        xpLabel.setPosition(280, Gdx.graphics.getHeight() - 50);
-        levelLabel.setText("Level: " + player.getLevel());
-        levelLabel.setPosition(400, Gdx.graphics.getHeight() - 50);
+        xpLabel.setPosition(280, Gdx.graphics.getHeight() - 70);
         timeLabel.setText((int) time / 60 + ":" + (int) (time % 60) + "\nSurvive!");
         weaponLabel.setText(GameManager.getNewGame().getPlayer().getWeapons().getAmmo() + "/" +
-            GameManager.getNewGame().getPlayer().getWeapons().getWeapon().getAmmoMax());
-        weaponLabel.setPosition(750, Gdx.graphics.getHeight() - 50);
+            GameManager.getNewGame().getPlayer().getWeapons().getMaxAmmo());
+        weaponLabel.setPosition(750, Gdx.graphics.getHeight() - 70);
 
         camera.position.set(player.getPlayerImage().getX() + player.getPlayerImage().getWidth() / 2,
             player.getPlayerImage().getY() + player.getPlayerImage().getHeight() / 2, 0);

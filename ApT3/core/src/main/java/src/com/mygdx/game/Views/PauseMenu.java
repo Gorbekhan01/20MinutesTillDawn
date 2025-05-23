@@ -5,12 +5,15 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import src.com.mygdx.game.Models.Ability;
 import src.com.mygdx.game.Models.Enemies.Elder;
 import src.com.mygdx.game.Models.Enemies.EyeBat;
 import src.com.mygdx.game.Models.Enemies.TentacleMonster;
@@ -56,6 +59,13 @@ public class PauseMenu implements Screen {
         Table abilityTable = new Table();
         abilityLabel = new Label("Ability", new Label.LabelStyle(GameManager.getFont(1), Color.WHITE));
         abilityTable.add(abilityLabel).padBottom(10).center().row();
+
+        for (Ability ability : GameManager.getNewGame().getPlayer().getAbilities()) {
+            Texture texture = new Texture(ability.getAbilityType().getPath());
+            Image image = new Image(texture);
+            image.setSize(12, 12);
+            abilityTable.add(image).padBottom(10).padRight(10);
+        }
 
         mainTable.add(cheatCodesTable).padBottom(20).row();
         mainTable.add(abilityTable).padBottom(20).row();

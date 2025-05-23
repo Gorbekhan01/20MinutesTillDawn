@@ -41,7 +41,7 @@ public class EyeBat {
         initializeAnimation();
         initializeExplosion();
         monsterImage.setPosition(position.x, position.y);
-        box = new Rectangle(position.x, position.y, 24, 24);
+        box = new Rectangle(position.x, position.y, 20, 20);
     }
 
     private void initializeAnimation() {
