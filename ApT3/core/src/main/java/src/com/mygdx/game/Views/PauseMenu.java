@@ -51,7 +51,9 @@ public class PauseMenu implements Screen {
 
         Label cheatCodesInfo = new Label(
             "Press 1 -> Decrease time to 1 min \n" +
-                "Press 2 -> Add HP \n", new Label.LabelStyle(GameManager.getFont(1), Color.WHITE));
+                "Press 2 -> Add HP \n" +
+                "Press 3 -> Add Level \n" +
+                "Press 4 -> Start boss fight \n", new Label.LabelStyle(GameManager.getFont(1), Color.WHITE));
         cheatCodesTable.add(cheatCodesInfo).center().row();
 
         Table abilityTable = new Table();

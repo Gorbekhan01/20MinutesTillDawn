@@ -66,7 +66,7 @@ public class MainGameScreen implements Screen {
         viewport = new ScreenViewport(camera);
         stage = new Stage(viewport);
         GameManager.getNewGame().setGameStage(stage);
-        player =  GameManager.getNewGame().getPlayer();
+        player = GameManager.getNewGame().getPlayer();
         player.getWeapons().initiate();
         backgroundTexture = new Texture("map.png");
         backgroundImage = new Image(backgroundTexture);
@@ -175,6 +175,16 @@ public class MainGameScreen implements Screen {
                     GameManager.getNewGame().setTime(time / 60);
                     GameManager.getNewGame().setSavedGame(MainGameScreen.this);
                     ((Game) Gdx.app.getApplicationListener()).setScreen(Menu.PAUSE_MENU.getScreen());
+                } else if (keycode == Input.Keys.H) { // hint menu
+                    GameManager.getNewGame().setSurvivedTime(passedTime);
+                    GameManager.getNewGame().setTime(time / 60);
+                    GameManager.getNewGame().setSavedGame(MainGameScreen.this);
+                    ((Game) Gdx.app.getApplicationListener()).setScreen(Menu.HINT_MENU.getScreen());
+                } else if (keycode == Input.Keys.NUM_3) { // hint menu
+                   GameManager.getNewGame().getPlayer().setXP4Level((player.getLevel() + 1) * 20);
+                } else if (keycode == Input.Keys.NUM_4) {
+                    spawnElder(1);
+                    elderSpawned = true;
                 }
                 return true;
 
@@ -285,11 +295,10 @@ public class MainGameScreen implements Screen {
                 public void run() {
                     stage.clear();
                     fixedStage.clear();
-                    ((Game) Gdx.app.getApplicationListener()).setScreen(Menu.ABILITY_MENU.getScreen());
+                    ((Game) Gdx.app.getApplicationListener()).setScreen(new AbilityMenu());
                 }
             }, 2);
         }
-
 
 
         if (!GameManager.getNewGame().isPaused()) {

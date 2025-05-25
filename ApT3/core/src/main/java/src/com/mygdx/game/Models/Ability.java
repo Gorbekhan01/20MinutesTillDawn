@@ -22,11 +22,11 @@ public class Ability {
         } else if (abilityType.equals(AbilityTypes.DAMAGER)) {
             GameManager.getNewGame().getPlayer().getWeapons().addDamage();
             timer = 10;
-            used = true;
+            used = false;
         } else if (abilityType.equals(AbilityTypes.SPEEDY)) {
             GameManager.getNewGame().getPlayer().addMaxSpeed();
             timer = 10;
-            used = true;
+            used = false;
         }
     }
 

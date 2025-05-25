@@ -51,8 +51,7 @@ public class AbilityMenu implements Screen {
     }
 
     public void createAbilityMenu() {
-
-
+        addRandomAbilities();
         Label label = new Label("select one of these abilities"
             ,new Label.LabelStyle(GameManager.getFont(2), Color.WHITE));
         mainTable.add(label).center().row();
@@ -156,6 +155,10 @@ public class AbilityMenu implements Screen {
 
 
     public void addRandomAbilities() {
+        randomNumbers.clear();
+        selectedRandomAbilities.clear();
+        counter = 3;
+
         while (counter > 0) {
             int random = (int) (Math.random() * abilityTypes.size());
             if (!randomNumbers.contains(random)) {

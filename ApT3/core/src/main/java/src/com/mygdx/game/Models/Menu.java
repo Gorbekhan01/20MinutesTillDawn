@@ -4,28 +4,32 @@ import com.badlogic.gdx.Screen;
 import src.com.mygdx.game.Views.*;
 
 public enum Menu {
-    LOGIN_MENU(new LoginMenu()),
-    SIGNUP_MENU(new SignUpMenu()),
-    MAIN_MENU(new MainMenu()),
-    PROFILE_MENU(new ProfileMenu()),
-    PREGAME_MENU(new PreGameMenu()),
-    SCOREBOARD_MENU(new ScoreBoardMenu()),
-    HINT_MENU(new HintMenu()),
-    SETTING_MENU(new SettingMenu()),
-    PAUSE_MENU(new PauseMenu()),
-    MAIN_GAME_SCREEN(new MainGameScreen()),
-    OPENING_SCREEN(new OpeningScreen()),
-    GAME_OVER(new GameOver()),
-    ABILITY_MENU(new AbilityMenu());
+    LOGIN_MENU(LoginMenu::new),
+    SIGNUP_MENU(SignUpMenu::new),
+    MAIN_MENU(MainMenu::new),
+    PROFILE_MENU(ProfileMenu::new),
+    PREGAME_MENU(PreGameMenu::new),
+    SCOREBOARD_MENU(ScoreBoardMenu::new),
+    HINT_MENU(HintMenu::new),
+    SETTING_MENU(SettingMenu::new),
+    PAUSE_MENU(PauseMenu::new),
+    MAIN_GAME_SCREEN(MainGameScreen::new),
+    OPENING_SCREEN(OpeningScreen::new),
+    GAME_OVER(GameOver::new),
+    ABILITY_MENU(AbilityMenu::new);
 
-    private Screen screen;
+    private final ScreenFactory screenFactory;
 
-    Menu(Screen menu) {
-        this.screen = menu;
+    Menu(ScreenFactory screenFactory) {
+        this.screenFactory = screenFactory;
     }
 
     public Screen getScreen() {
-        return screen;
+        return screenFactory.create();
     }
 
+    @FunctionalInterface
+    private interface ScreenFactory {
+        Screen create();
+    }
 }

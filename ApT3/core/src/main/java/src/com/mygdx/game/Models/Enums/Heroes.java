@@ -3,7 +3,7 @@ package src.com.mygdx.game.Models.Enums;
 import com.badlogic.gdx.graphics.Texture;
 
 public enum Heroes {
-    SHANA(4,4 , new String[] {
+    SHANA("Shana",4,4 , new String[] {
         "heroes/Shana/Walk_0.png",
         "heroes/Shana/Walk_1.png",
         "heroes/Shana/Walk_2.png",
@@ -12,7 +12,7 @@ public enum Heroes {
         "heroes/Shana/Walk_5.png",
         "heroes/Shana/Walk_6.png"
     }),
-    DIAMOND(1,7 , new String[] {
+    DIAMOND("Diamond",1,7 , new String[] {
         "heroes/Diamond/Walk_0.png",
         "heroes/Diamond/Walk_1.png",
         "heroes/Diamond/Walk_2.png",
@@ -22,7 +22,7 @@ public enum Heroes {
         "heroes/Diamond/Walk_6.png",
         "heroes/Diamond/Walk_7.png",
     }),
-    SCARLET(5,3 , new String[] {
+    SCARLET("Scarlet",5,3 , new String[] {
         "heroes/Scarlet/Walk_0.png",
         "heroes/Scarlet/Walk_1.png",
         "heroes/Scarlet/Walk_2.png",
@@ -32,7 +32,7 @@ public enum Heroes {
         "heroes/Scarlet/Walk_6.png",
         "heroes/Scarlet/Walk_7.png",
     }),
-    LILITH(3,5 , new String[] {
+    LILITH("Lilith",3,5 , new String[] {
         "heroes/Lilith/Walk_0.png",
         "heroes/Lilith/Walk_1.png",
         "heroes/Lilith/Walk_2.png",
@@ -42,7 +42,7 @@ public enum Heroes {
         "heroes/Lilith/Walk_6.png",
         "heroes/Lilith/Walk_7.png",
     }),
-    DASHER(10,2,new String[] {
+    DASHER("Dasher",10,2,new String[] {
         "heroes/Dasher/Walk_0.png",
         "heroes/Dasher/Walk_1.png",
         "heroes/Dasher/Walk_2.png",
@@ -53,15 +53,21 @@ public enum Heroes {
         "heroes/Dasher/Walk_7.png",
     });
 
+    private String name;
     private int speed;
     private int HP;
     private String[] images;
 
 
-    Heroes(int speed, int HP , String[] images) {
+    Heroes(String name,int speed, int HP , String[] images) {
+        this.name = name;
         this.speed = speed;
         this.HP = HP;
         this.images = images;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public int getSpeed() {
@@ -75,6 +81,7 @@ public enum Heroes {
     public String[] getImages() {
         return images;
     }
+
 
 }
 
