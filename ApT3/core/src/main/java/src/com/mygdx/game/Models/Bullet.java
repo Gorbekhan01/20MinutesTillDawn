@@ -10,6 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.math.Intersector;
 import src.com.mygdx.game.Models.Enemies.Elder;
+import src.com.mygdx.game.Models.Enemies.Enemy;
 import src.com.mygdx.game.Models.Enemies.EyeBat;
 import src.com.mygdx.game.Models.Enemies.TentacleMonster;
 
@@ -21,17 +22,21 @@ public class Bullet extends Actor {
     private boolean isEyebat = false;
     private Texture bulletTexture = null;
 
-    public Bullet(Vector2 position, Vector2 direction , boolean isEyeBat) {
+    public Bullet(Vector2 position, Vector2 direction, boolean isEyeBat) {
         if (isEyeBat) {
-            bulletTexture= new Texture("enemies/eyebat/5.png");
+            bulletTexture = new Texture("enemies/eyebat/5.png");
         } else {
-            bulletTexture= new Texture("weapons/Ammo.png");
+            bulletTexture = new Texture("weapons/Ammo.png");
         }
         bulletImage = new Image(bulletTexture);
         if (isEyeBat) {
-            box = new Rectangle(position.x, position.y, 12, 12);
+            float centerX = position.x + bulletImage.getWidth() / 2;
+            float centerY = position.y + bulletImage.getHeight() / 2;
+            box = new Rectangle(centerX - 6, centerY - 6, 12, 12);
         } else {
-            box = new Rectangle(position.x, position.y, 8, 8);
+            float centerX = position.x + bulletImage.getWidth() / 2;
+            float centerY = position.y + bulletImage.getHeight() / 2;
+            box = new Rectangle(centerX - 4, centerY - 4, 8, 8);
         }
         bulletImage.setSize(4, 4);
         bulletImage.setPosition(position.x, position.y);
@@ -59,37 +64,15 @@ public class Bullet extends Actor {
             }
         }
 
-        boolean collision = false;
         if (!isEyebat) {
-            for (EyeBat eyeBat : GameManager.getNewGame().getEyeBat()) {
-                if (eyeBat.getBox().overlaps(box)) {
-                    eyeBat.setHp(GameManager.getNewGame().getPlayer().getWeapons().getDamage());
+
+            for (Enemy enemy : GameManager.getNewGame().getEnemies()) {
+                if (enemy.getBox().overlaps(box) && !enemy.isDead()) {
+                    enemy.setHp(GameManager.getNewGame().getPlayer().getWeapons().getDamage());
                     bulletImage.remove();
-                    collision = true;
-                    break;
+                    return;
                 }
             }
-
-            if (!collision) {
-                for (TentacleMonster tentacleMonster : GameManager.getNewGame().getTentacleMonsters()) {
-                    if (tentacleMonster.getBox().overlaps(box)) {
-                        tentacleMonster.setHp(GameManager.getNewGame().getPlayer().getWeapons().getDamage());
-                        bulletImage.remove();
-                        break;
-                    }
-                }
-            }
-
-            if (!collision) {
-                for (Elder elder : GameManager.getNewGame().getElder()) {
-                    if (elder.getBox().overlaps(box)) {
-                        elder.setHp(GameManager.getNewGame().getPlayer().getWeapons().getDamage());
-                        bulletImage.remove();
-                        break;
-                    }
-                }
-            }
-
 
         }
 
