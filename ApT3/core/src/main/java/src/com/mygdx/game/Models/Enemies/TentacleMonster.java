@@ -39,7 +39,9 @@ public class TentacleMonster {
         initializeAnimation();
         initializeExplosion();
         monsterImage.setPosition(position.x, position.y);
-        box = new Rectangle(position.x, position.y, 20, 20);
+        float centerX = position.x + monsterImage.getWidth() / 2;
+        float centerY = position.y + monsterImage.getHeight() / 2;
+        box = new Rectangle(centerX - 10, centerY - 10, 20, 20);
     }
 
     private void initializeAnimation() {

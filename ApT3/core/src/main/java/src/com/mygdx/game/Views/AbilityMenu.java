@@ -143,6 +143,7 @@ public class AbilityMenu implements Screen {
                 Ability ability = new Ability(selectedRandomAbilities.get(selectedIndex));
                 GameManager.getNewGame().getPlayer().getAbilities().add(ability);
                 GameManager.getNewGame().setWasPaused(true);
+                GameManager.getNewGame().setPaused(false);
                 ((Game) Gdx.app.getApplicationListener()).setScreen(GameManager.getNewGame().getSavedGame());
             }
         });

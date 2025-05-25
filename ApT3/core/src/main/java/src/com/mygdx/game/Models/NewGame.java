@@ -33,6 +33,8 @@ public class NewGame {
     public boolean wasPaused = false;
     private int playerXP = 0;
     private int kills = 0;
+    private double gameTime = 0;
+    private boolean paused = false;
 
     public NewGame(double time, Player player) {
         this.time = time;
@@ -41,6 +43,10 @@ public class NewGame {
 
     public double getTime() {
         return time;
+    }
+
+    public void setTime(double time) {
+        this.time = time;
     }
 
     public Player getPlayer() {
@@ -173,6 +179,14 @@ public class NewGame {
 
     public void setKills(int kills) {
         this.kills = kills;
+    }
+
+    public boolean isPaused() {
+        return paused;
+    }
+
+    public void setPaused(boolean paused) {
+        this.paused = paused;
     }
 
 

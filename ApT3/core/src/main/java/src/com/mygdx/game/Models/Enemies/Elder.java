@@ -44,7 +44,9 @@ public class Elder {
         initializeAnimation();
         initializeExplosion();
         monsterImage.setPosition(position.x, position.y);
-        box = new Rectangle(position.x, position.y, 55, 55);
+        float centerX = position.x + monsterImage.getWidth() / 2;
+        float centerY = position.y + monsterImage.getHeight() / 2;
+        box = new Rectangle(centerX - 27, centerY - 27, 55, 55);
     }
 
     private void initializeAnimation() {

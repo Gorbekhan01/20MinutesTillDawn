@@ -251,8 +251,8 @@ public class Player {
 
     public void addHp(int amount) {
         HP += amount;
-        if (HP >= hero.getHP()) {
-            HP = hero.getHP();
+        if (HP >= maxHP) {
+            HP = maxHP;
         }
     }
 
