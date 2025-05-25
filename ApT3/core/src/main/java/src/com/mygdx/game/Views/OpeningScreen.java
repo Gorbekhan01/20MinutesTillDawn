@@ -17,6 +17,8 @@ import com.badlogic.gdx.utils.Timer;
 import src.com.mygdx.game.Models.GameManager;
 import src.com.mygdx.game.Models.Menu;
 
+import java.io.FileNotFoundException;
+
 public class OpeningScreen implements Screen {
     private Stage stage;
     private BitmapFont font;
@@ -29,6 +31,11 @@ public class OpeningScreen implements Screen {
 
     @Override
     public void show() {
+        try {
+            GameManager.loadUsers();
+        } catch (FileNotFoundException e) {
+            System.out.println("File not found");
+        }
         stage = new Stage();
         Gdx.input.setInputProcessor(stage);
         font = new BitmapFont();

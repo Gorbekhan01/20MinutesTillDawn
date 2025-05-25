@@ -1,95 +1,49 @@
 package src.com.mygdx.game.Models.Enemies;
 
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Animation;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import src.com.mygdx.game.Models.GameManager;
-import src.com.mygdx.game.Models.Point;
 
-public class Elder {
-    private Vector2 position;
-    private int Hp = 4000;
+public class Elder extends Enemy {
     private float normalSpeed = 20f;
     private float dashSpeedMultiplier = 260f;
     private float dashTime = 5f;
-    private Animation<TextureRegion> walkAnimation, explosionAnimation;
-    private float stateTime, stateTime2;
-    private Image monsterImage, explosionImage;
-    private Rectangle box;
-    private boolean isDead = false, isExploding = false;
     private float dashTimer = 0;
     private boolean isDashing = false;
     private Vector2 savedPosition = new Vector2();
 
-    private String[] images = new String[]{
-        "enemies/elder/1.png",
-    };
-
-    private String[] explosionImages = new String[]{
-        "enemies/explosion/elderExplosion/1.png",
-        "enemies/explosion/elderExplosion/2.png",
-        "enemies/explosion/elderExplosion/3.png",
-        "enemies/explosion/elderExplosion/4.png",
-        "enemies/explosion/elderExplosion/5.png",
-        "enemies/explosion/elderExplosion/6.png"
-
-    };
-
     public Elder(int startX, int startY) {
-        this.position = new Vector2(startX, startY);
+        super(startX, startY,
+            4000,
+            20f,
+            new String[]{"enemies/elder/1.png"},
+            new String[]{
+                "enemies/explosion/elderExplosion/1.png",
+                "enemies/explosion/elderExplosion/2.png",
+                "enemies/explosion/elderExplosion/3.png",
+                "enemies/explosion/elderExplosion/4.png",
+                "enemies/explosion/elderExplosion/5.png",
+                "enemies/explosion/elderExplosion/6.png"
+            });
+
         initializeAnimation();
         initializeExplosion();
-        monsterImage.setPosition(position.x, position.y);
+        monsterImage.setSize(55, 55);
+        explosionImage.setSize(55, 55);
         float centerX = position.x + monsterImage.getWidth() / 2;
         float centerY = position.y + monsterImage.getHeight() / 2;
         box = new Rectangle(centerX - 27, centerY - 27, 55, 55);
     }
 
-    private void initializeAnimation() {
-        TextureRegion[] frames = new TextureRegion[images.length];
-        for (int i = 0; i < images.length; i++) {
-            frames[i] = new TextureRegion(new Texture(images[i]));
-        }
-        walkAnimation = new Animation<>(0.1f, frames);
-        stateTime = 0f;
-        monsterImage = new Image(new TextureRegionDrawable(frames[0]));
-        monsterImage.setSize(55, 55);
-    }
-
-    private void initializeExplosion() {
-        TextureRegion[] frames = new TextureRegion[explosionImages.length];
-        for (int i = 0; i < explosionImages.length; i++) {
-            frames[i] = new TextureRegion(new Texture(explosionImages[i]));
-        }
-        explosionAnimation = new Animation<>(0.1f, frames);
-        stateTime2 = 0f;
-        explosionImage = new Image(new TextureRegionDrawable(frames[0]));
-        explosionImage.setSize(55, 55);
-    }
-
-    public void update(float delta) {
-        if (isExploding) {
-            stateTime2 += delta;
-            explosionImage.setDrawable(new TextureRegionDrawable(explosionAnimation.getKeyFrame(stateTime2, false)));
-
-            if (explosionAnimation.isAnimationFinished(stateTime2)) {
-                explosionImage.remove();
-                isDead = true;
-                this.dispose();
-            }
-            return;
-        }
-
+    @Override
+    protected void updateMovement(float delta) {
         dashTimer += delta;
 
         if (!isDashing && dashTimer >= dashTime) {
             isDashing = true;
-            savedPosition = new Vector2(GameManager.getNewGame().getPlayer().getPosition().x + 5
-                , GameManager.getNewGame().getPlayer().getPosition().y + 5);
+            savedPosition = new Vector2(GameManager.getNewGame().getPlayer().getPosition().x + 5,
+                GameManager.getNewGame().getPlayer().getPosition().y + 5);
             dashTimer = 0;
         }
 
@@ -98,7 +52,6 @@ public class Elder {
 
         if (isDashing) {
             position.add(direction.scl(dashSpeedMultiplier * delta));
-
             if (position.dst(savedPosition) < 3f) {
                 isDashing = false;
                 dashTimer = 0;
@@ -108,53 +61,7 @@ public class Elder {
             position.add(normalDirection.scl(normalSpeed * delta));
         }
 
-
-        if (Hp <= 0 && !isExploding) {
-            isExploding = true;
-            GameManager.getNewGame().getPlayer().setKillCount();
-            monsterImage.remove();
-            explosionImage.setPosition(position.x, position.y);
-            Point point = new Point(position.x, position.y);
-            GameManager.getNewGame().getGameStage().addActor(point.getImageBox());
-            GameManager.getNewGame().getPoints().add(point);
-            GameManager.getNewGame().getGameStage().addActor(explosionImage);
-            isDead = true;
-        } else {
-            monsterImage.setPosition(position.x, position.y);
-            monsterImage.setDrawable(new TextureRegionDrawable(walkAnimation.getKeyFrame(stateTime, true)));
-        }
-    }
-
-    public Image getMonsterImage() {
-        return monsterImage;
-    }
-
-    public void dispose() {
-        for (String image : images) {
-            new Texture(image).dispose();
-        }
-    }
-
-    public Rectangle getBox() {
-        return box;
-    }
-
-    public Vector2 getPosition() {
-        return position;
-    }
-
-    public int getHp() {
-        return Hp;
-    }
-
-    public void setHp(int damage) {
-        Hp -= damage;
-        if (Hp <= 0) {
-            Hp = 0;
-        }
-    }
-
-    public boolean isDead() {
-        return isDead;
+        monsterImage.setPosition(position.x, position.y);
+        monsterImage.setDrawable(new TextureRegionDrawable(walkAnimation.getKeyFrame(stateTime, true)));
     }
 }

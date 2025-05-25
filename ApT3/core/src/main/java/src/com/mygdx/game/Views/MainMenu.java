@@ -26,6 +26,8 @@ import src.com.mygdx.game.Models.GameManager;
 import src.com.mygdx.game.Models.Menu;
 import src.com.mygdx.game.Models.User;
 
+import java.io.IOException;
+
 public class MainMenu implements Screen {
     TextButton settingButton, profileButton, preGameButton, scoreBoardButton, hintButton, continueSavedGameButton,
         exitButton;
@@ -89,6 +91,11 @@ public class MainMenu implements Screen {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 stage.clear();
+                try {
+                    GameManager.saveUsers();
+                } catch (Exception e) {
+                    System.out.println("Error saving users");
+                }
                 ((Game) Gdx.app.getApplicationListener()).setScreen(Menu.LOGIN_MENU.getScreen());
 
             }

@@ -2,7 +2,6 @@ package src.com.mygdx.game.Models;
 
 public class User {
     private String username;
-    private Player player;
     private String password;
     private String answer;
     private String securityQNumber;
@@ -65,7 +64,6 @@ public class User {
     public User(String username, String password) {
         this.username = username;
         this.password = password;
-        player = new Player();
     }
 
     public int getScore() {
@@ -106,13 +104,6 @@ public class User {
 
     public void setMostTimeSurvived(int mostTimeSurvived) {
         this.mostTimeSurvived = Math.max(this.mostTimeSurvived, mostTimeSurvived);
-    }
-
-    public void setPlayer(Player player) {
-        this.player = player;
-    }
-    public Player getPlayer() {
-        return player;
     }
 
 

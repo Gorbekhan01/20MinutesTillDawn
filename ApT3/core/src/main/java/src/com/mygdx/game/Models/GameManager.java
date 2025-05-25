@@ -9,9 +9,16 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import src.com.mygdx.game.MainGame;
 import src.com.mygdx.game.Views.MainMenu;
 
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -172,6 +179,26 @@ public class GameManager {
         sound = Gdx.audio.newSound(Gdx.files.internal(address));
         if (SFX) {
             sound.play();
+        }
+    }
+
+    public static void loadUsers() throws FileNotFoundException {
+        users.clear();
+        Gson gson = new Gson();
+        Type playerListType = new TypeToken<List<User>>(){}.getType();
+
+        try (FileReader reader = new FileReader("users.json")) {
+            ArrayList<User> loaded = gson.fromJson(reader, playerListType);
+            users.addAll(loaded);
+        } catch (Exception e) {
+            System.out.println("Error loading users.json");
+        }
+    }
+
+    public static void saveUsers() throws IOException {
+        Gson gson = new Gson();
+        try (FileWriter writer = new FileWriter("users.json")) {
+            gson.toJson(users, writer);
         }
     }
 }

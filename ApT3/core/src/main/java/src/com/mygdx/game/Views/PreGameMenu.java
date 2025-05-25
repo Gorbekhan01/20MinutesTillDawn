@@ -247,8 +247,7 @@ public class PreGameMenu implements Screen {
         start.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                GameManager.getCurrentUser().setPlayer(player);
-                NewGame newGame = new NewGame(time,GameManager.getCurrentUser().getPlayer());
+                NewGame newGame = new NewGame(time,player);
                 if (upInt!=0) newGame.setUpKey(upInt);
                 if (downInt!=0) newGame.setDownKey(downInt);
                 if (rightInt!=0) newGame.setRightKey(rightInt);

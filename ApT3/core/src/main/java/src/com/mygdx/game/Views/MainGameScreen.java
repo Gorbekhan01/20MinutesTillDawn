@@ -19,10 +19,7 @@ import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import src.com.mygdx.game.Models.*;
-import src.com.mygdx.game.Models.Enemies.Elder;
-import src.com.mygdx.game.Models.Enemies.EyeBat;
-import src.com.mygdx.game.Models.Enemies.TentacleMonster;
-import src.com.mygdx.game.Models.Enemies.Tree;
+import src.com.mygdx.game.Models.Enemies.*;
 import box2dLight.PointLight;
 import box2dLight.RayHandler;
 
@@ -69,7 +66,7 @@ public class MainGameScreen implements Screen {
         viewport = new ScreenViewport(camera);
         stage = new Stage(viewport);
         GameManager.getNewGame().setGameStage(stage);
-        player = GameManager.getCurrentUser().getPlayer();
+        player =  GameManager.getNewGame().getPlayer();
         player.getWeapons().initiate();
         backgroundTexture = new Texture("map.png");
         backgroundImage = new Image(backgroundTexture);
@@ -133,9 +130,7 @@ public class MainGameScreen implements Screen {
                 }
             }
 
-            GameManager.getNewGame().getEyeBat().removeIf(EyeBat::isDead);
-            GameManager.getNewGame().getTentacleMonsters().removeIf(TentacleMonster::isDead);
-            GameManager.getNewGame().getElder().removeIf(Elder::isDead);
+            GameManager.getNewGame().getEnemies().removeIf(Enemy::isDead);
             GameManager.getNewGame().getPlayer().setXP4Level(18);
         }
 
@@ -184,7 +179,6 @@ public class MainGameScreen implements Screen {
                 return true;
 
             }
-
 
             @Override
             public boolean keyUp(int keycode) {
@@ -331,22 +325,16 @@ public class MainGameScreen implements Screen {
             rayHandler.setCombinedMatrix(camera.combined);
 
             if (GameManager.getNewGame().isWasPaused()) {
-                GameManager.getNewGame().getEyeBat().removeIf(EyeBat::isDead);
-                GameManager.getNewGame().getTentacleMonsters().removeIf(TentacleMonster::isDead);
-                GameManager.getNewGame().getElder().removeIf(Elder::isDead);
+                GameManager.getNewGame().getEnemies().removeIf(Enemy::isDead);
 
-                for (TentacleMonster monster : GameManager.getNewGame().getTentacleMonsters()) {
-                    stage.addActor(monster.getMonsterImage());
+                for (Enemy e : GameManager.getNewGame().getEnemies()) {
+                    stage.addActor(e.getMonsterImage());
                 }
+
                 for (Tree tree : GameManager.getNewGame().getTrees()) {
                     stage.addActor(tree.getImage());
                 }
-                for (EyeBat eyeBat : GameManager.getNewGame().getEyeBat()) {
-                    stage.addActor(eyeBat.getMonsterImage());
-                }
-                for (Elder elder : GameManager.getNewGame().getElder()) {
-                    stage.addActor(elder.getMonsterImage());
-                }
+
                 GameManager.getNewGame().setWasPaused(false);
             }
             GameManager.getNewGame().getPoints().removeIf(Point::getVisible);
@@ -373,9 +361,8 @@ public class MainGameScreen implements Screen {
                 GameManager.getNewGame().setResult("dead");
                 GameManager.getNewGame().setSurvivedTime(passedTime);
                 GameManager.playSound("sounds/lost.wav");
-                GameManager.getNewGame().getElder().removeIf(Elder::isDead);
-                GameManager.getNewGame().getEyeBat().removeIf(EyeBat::isDead);
-                GameManager.getNewGame().getTentacleMonsters().removeIf(TentacleMonster::isDead);
+                GameManager.getNewGame().getEnemies().removeIf(Enemy::isDead);
+
                 GameManager.getNewGame().setWasPaused(false);
                 ((Game) Gdx.app.getApplicationListener()).setScreen(Menu.GAME_OVER.getScreen());
             }
@@ -385,9 +372,8 @@ public class MainGameScreen implements Screen {
                 GameManager.getNewGame().setResult("victory");
                 GameManager.getNewGame().setSurvivedTime(passedTime);
                 GameManager.playSound("sounds/win.wav");
-                GameManager.getNewGame().getElder().removeIf(Elder::isDead);
-                GameManager.getNewGame().getEyeBat().removeIf(EyeBat::isDead);
-                GameManager.getNewGame().getTentacleMonsters().removeIf(TentacleMonster::isDead);
+                GameManager.getNewGame().getEnemies().removeIf(Enemy::isDead);
+
                 GameManager.getNewGame().setWasPaused(false);
                 ((Game) Gdx.app.getApplicationListener()).setScreen(Menu.GAME_OVER.getScreen());
             }
@@ -466,14 +452,8 @@ public class MainGameScreen implements Screen {
 
 
             //updating enemies
-            for (TentacleMonster monster : GameManager.getNewGame().getTentacleMonsters()) {
-                monster.update(delta);
-            }
-            for (EyeBat monster : GameManager.getNewGame().getEyeBat()) {
-                monster.update(delta);
-            }
-            for (Elder monster : GameManager.getNewGame().getElder()) {
-                monster.update(delta);
+            for (Enemy enemy : GameManager.getNewGame().getEnemies()) {
+                enemy.update(delta);
             }
 
             for (Tree tree : trees) {
@@ -546,7 +526,7 @@ public class MainGameScreen implements Screen {
                 monster = new TentacleMonster((int) x, Gdx.graphics.getHeight());
 
             }
-            GameManager.getNewGame().getTentacleMonsters().add(monster);
+            GameManager.getNewGame().getEnemies().add(monster);
             stage.addActor(monster.getMonsterImage());
         }
     }
@@ -574,7 +554,7 @@ public class MainGameScreen implements Screen {
                 monster = new EyeBat((int) x, Gdx.graphics.getHeight());
 
             }
-            GameManager.getNewGame().getEyeBat().add(monster);
+            GameManager.getNewGame().getEnemies().add(monster);
             stage.addActor(monster.getMonsterImage());
         }
     }
@@ -602,7 +582,7 @@ public class MainGameScreen implements Screen {
                 monster = new Elder((int) x, Gdx.graphics.getHeight());
 
             }
-            GameManager.getNewGame().getElder().add(monster);
+            GameManager.getNewGame().getEnemies().add(monster);
             stage.addActor(monster.getMonsterImage());
         }
     }

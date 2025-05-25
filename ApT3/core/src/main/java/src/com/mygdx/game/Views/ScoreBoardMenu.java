@@ -31,6 +31,7 @@ public class ScoreBoardMenu implements Screen {
 
     @Override
     public void show() {
+        System.out.println(GameManager.getUsers().size());
         if (stage == null) {
             stage = new Stage();
         }
@@ -131,10 +132,14 @@ public class ScoreBoardMenu implements Screen {
         backButton.getLabel().setFontScale(0.85f);
         mainTable.add(backButton).width(250).height(55).padTop(15);
 
+
         backButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
+                System.out.println(GameManager.getUsers().size());
+
                 ((Game) Gdx.app.getApplicationListener()).setScreen(Menu.MAIN_MENU.getScreen());
+
             }
         });
     }

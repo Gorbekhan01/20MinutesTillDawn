@@ -33,6 +33,9 @@ public class AbilityMenu implements Screen {
 
     @Override
     public void show() {
+        randomNumbers.clear();
+        abilityTypes.clear();
+        selectedRandomAbilities.clear();
         abilityTable1 = new Table();
         abilityTable2 = new Table();
         abilityTable3 = new Table();
@@ -144,6 +147,7 @@ public class AbilityMenu implements Screen {
                 GameManager.getNewGame().getPlayer().getAbilities().add(ability);
                 GameManager.getNewGame().setWasPaused(true);
                 GameManager.getNewGame().setPaused(false);
+                stage.clear();
                 ((Game) Gdx.app.getApplicationListener()).setScreen(GameManager.getNewGame().getSavedGame());
             }
         });

@@ -16,6 +16,7 @@ import src.com.mygdx.game.Models.GameManager;
 import src.com.mygdx.game.Models.Menu;
 import src.com.mygdx.game.Models.User;
 
+import java.io.IOException;
 import java.util.Random;
 
 public class SignUpMenu implements Screen {
@@ -139,6 +140,11 @@ public class SignUpMenu implements Screen {
                 user.setPassword(password);
                 user.setSecurityQNumber(securityQuestion);
                 user.setSecurityAnswer(securityAnswer);
+                try {
+                    GameManager.saveUsers();
+                } catch (IOException e) {
+                    System.out.println("Error saving users");
+                }
 
                 GameManager.getUsers().add(user);
                 ((Game) Gdx.app.getApplicationListener()).setScreen(Menu.LOGIN_MENU.getScreen());
