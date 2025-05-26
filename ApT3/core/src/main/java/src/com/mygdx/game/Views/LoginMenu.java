@@ -32,6 +32,11 @@ public class LoginMenu implements Screen {
     TextField.TextFieldStyle textFieldStyle;
     private boolean validPassword = false;
     private boolean validUsername = false;
+    private Label securityQuestionLabel;
+    private TextField answerField;
+    private boolean waitingForSecurityAnswer = false;
+    private boolean waitingForNewPassword = false;
+
 
     @Override
     public void show() {
@@ -127,27 +132,25 @@ public class LoginMenu implements Screen {
             }
         });
 
-
-
         forgetPasswordButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 errorLabel.setColor(Color.RED);
-                if (first) {
-                    String username = usernameField.getText();
-                    if (usernameField.getText().isEmpty()) {
+
+                if (!waitingForSecurityAnswer && !waitingForNewPassword) {
+                    String username = usernameField.getText().trim();
+                    errorLabel.setText("");
+
+                    if (username.isEmpty()) {
                         errorLabel.setText("Please first enter username");
                         return;
                     }
 
-                    //find user by username
-                    if (!GameManager.getUsers().isEmpty()) {
-                        for (User user : GameManager.getUsers()) {
-                            if (user.getUsername().equals(username)) {
-                                currentUser = user;
-                                System.out.println(user.getUsername());
-                                break;
-                            }
+                    currentUser = null;
+                    for (User user : GameManager.getUsers()) {
+                        if (user.getUsername().equals(username)) {
+                            currentUser = user;
+                            break;
                         }
                     }
 
@@ -155,42 +158,83 @@ public class LoginMenu implements Screen {
                         errorLabel.setText("User not found");
                         return;
                     }
-                    Label changePassword = new Label("Set a new Password", skin);
-                    newPasswordField = new TextField("", skin);
-                    newPasswordField.setStyle(textFieldStyle);
 
-                    buttonTable.add(changePassword).padTop(15).center().row();
-                    changePassword.setFontScale(0.8f);
-                    buttonTable.add(newPasswordField).width(180).height(30).padTop(10).center().row();
-                    forgetPasswordButton.setText("confirm");
-                    first = false;
+                    securityQuestionLabel = new Label(currentUser.getSecurityQNumber(), skin);
+                    securityQuestionLabel.setFontScale(0.85f);
+                    answerField = new TextField("", skin);
+
+                    buttonTable.add(securityQuestionLabel).padTop(15).center().row();
+                    buttonTable.add(answerField).width(180).height(30).padTop(10).center().row();
+
+                    forgetPasswordButton.setText("Check Answer");
+                    waitingForSecurityAnswer = true;
+                    errorLabel.setText("");
+                    return;
                 }
-                if (!first) {
+
+                if (waitingForSecurityAnswer && !waitingForNewPassword) {
+                    String answer = answerField.getText().trim();
+
+                    if (answer.isEmpty()) {
+                        errorLabel.setText("Please answer the question");
+                        return;
+                    }
+
+                    if (!currentUser.getSecurityAnswer().equals(answer)) {
+                        errorLabel.setText("Wrong answer");
+                        return;
+                    }
+
+                    errorLabel.setColor(Color.GREEN);
+                    errorLabel.setText("Correct! Now enter a new password.");
+
+                    newPasswordField = new TextField("", skin);
+                    buttonTable.add(new Label("New password:", skin)).padTop(10).center().row();
+                    buttonTable.add(newPasswordField).width(180).height(30).padTop(10).center().row();
+
+                    forgetPasswordButton.setText("Change Password");
+                    waitingForNewPassword = true;
+                    waitingForSecurityAnswer = false;
+                    return;
+                }
+
+                if (waitingForNewPassword) {
                     String newPassword = newPasswordField.getText();
                     if (newPassword.isEmpty()) {
-                        errorLabel.setText("Please fill all the fields");
+                        errorLabel.setText("Please enter new password");
                         return;
                     }
-                    SignUpController signUpController = new SignUpController();
-                    String error = signUpController.checkPasswordStrength(newPassword);
-                    if (error != null) {
-                        errorLabel.setText(error);
-                        return;
-                    }
+
+                     SignUpController signUpController = new SignUpController();
+                     String error = signUpController.checkPasswordStrength(newPassword);
+                     if (error != null) {
+                         errorLabel.setColor(Color.RED);
+                         errorLabel.setText(error);
+                         return;
+                     }
+
                     currentUser.setPassword(newPassword);
-                    errorLabel.setText("password changed successfully");
+
                     errorLabel.setColor(Color.GREEN);
+                    errorLabel.setText("Password changed successfully!");
+
+                    forgetPasswordButton.setText("Forget Password");
+                    waitingForSecurityAnswer = false;
+                    waitingForNewPassword = false;
+                    currentUser = null;
+                    return;
                 }
             }
         });
+
         backButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 ((Game) Gdx.app.getApplicationListener()).setScreen(Menu.OPENING_SCREEN.getScreen());
             }
         });
-
     }
+
 
     @Override
     public void render(float delta) {
