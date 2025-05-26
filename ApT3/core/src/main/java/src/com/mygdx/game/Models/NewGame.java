@@ -30,6 +30,7 @@ public class NewGame {
     private int kills = 0;
     private double gameTime = 0;
     private boolean paused = false;
+    private boolean leftShoot = false;
 
     public NewGame(double time, Player player) {
         this.time = time;
@@ -175,6 +176,14 @@ public class NewGame {
 
     public void setPaused(boolean paused) {
         this.paused = paused;
+    }
+
+    public boolean isLeftShootOn(){
+        return leftShoot;
+    }
+
+    public void setLeftShoot(boolean status) {
+        leftShoot = status;
     }
 
 

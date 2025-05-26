@@ -123,12 +123,13 @@ public class Player {
         stateTime += delta;
         position.add(velocity.x * delta, velocity.y * delta);
 
-        if (position.x < 0) position.x = 0;
-        if (position.x + playerImage.getWidth() > Gdx.graphics.getWidth())
-            position.x = Gdx.graphics.getWidth() - playerImage.getWidth();
-        if (position.y < 0) position.y = 0;
-        if (position.y + playerImage.getHeight() > Gdx.graphics.getHeight())
-            position.y = Gdx.graphics.getHeight() - playerImage.getHeight();
+        if (position.x < -playerImage.getWidth() / 2) position.x = -playerImage.getWidth() / 2;
+        if (position.x + playerImage.getWidth() / 2 > Gdx.graphics.getWidth())
+            position.x = Gdx.graphics.getWidth() - playerImage.getWidth() / 2;
+        if (position.y < -playerImage.getHeight() / 2) position.y = -playerImage.getHeight() / 2;
+        if (position.y + playerImage.getHeight() / 2 > Gdx.graphics.getHeight())
+            position.y = Gdx.graphics.getHeight() - playerImage.getHeight() / 2;
+
 
         playerImage.setPosition(position.x, position.y);
         box.setPosition(position.x, position.y);
@@ -159,12 +160,14 @@ public class Player {
 
         if (damaged) {
             invincibleTimer -= delta;
-            playerImage.setColor(1, 1, 1, 0.5f);
+            float alpha = (float) (0.5f + 0.5f * Math.sin(invincibleTimer * 10));
+            playerImage.setColor(1, 1, 1, alpha);
             if (invincibleTimer <= 0) {
                 damaged = false;
                 playerImage.setColor(1, 1, 1, 1f);
             }
         }
+
 
         if (isMoving) {
             playerImage.setDrawable(new TextureRegionDrawable(walkAnimation.getKeyFrame(stateTime, true)));

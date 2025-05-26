@@ -17,6 +17,7 @@ import com.badlogic.gdx.utils.Align;
 import src.com.mygdx.game.Models.Enums.AbilityTypes;
 import src.com.mygdx.game.Models.Enums.Heroes;
 import src.com.mygdx.game.Models.GameManager;
+import src.com.mygdx.game.Models.Menu;
 
 public class HintMenu implements Screen {
     private static final float PADDING = 15f;
@@ -93,18 +94,18 @@ public class HintMenu implements Screen {
         Table section = new Table();
 
         Table col1 = new Table();
-        addControl(col1, "Shoot", GameManager.getNewGame().getShootKey());
+        addControl(col1, "Shoot", GameManager.getShootKey());
         col1.row();
-        addControl(col1, "Move Down", GameManager.getNewGame().getDownKey());
+        addControl(col1, "Move Down", GameManager.getDownKey());
         col1.row();
-        addControl(col1, "Move Right", GameManager.getNewGame().getRightKey());
+        addControl(col1, "Move Right", GameManager.getRightKey());
 
         Table col2 = new Table();
-        addControl(col2, "Reload", GameManager.getNewGame().getReloadKey());
+        addControl(col2, "Reload", GameManager.getReloadKey());
         col2.row();
-        addControl(col2, "Move Left", GameManager.getNewGame().getLeftKey());
+        addControl(col2, "Move Left", GameManager.getLeftKey());
         col2.row();
-        addControl(col2, "Move Up", GameManager.getNewGame().getUpKey());
+        addControl(col2, "Move Up", GameManager.getUpKey());
 
         section.add(col1).padRight(10f);
         section.add(col2);
@@ -161,6 +162,9 @@ public class HintMenu implements Screen {
 
     private void addControl(Table table, String action, int keyCode) {
         String keyStr = (keyCode == 62) ? "Space" : String.valueOf((char)(keyCode + 68));
+        if (GameManager.isLeftShoot() && action.equals("Shoot")){
+            keyStr = "Left";
+        }
         Label lbl = new Label("[" + keyStr + "] " + action,
             new Label.LabelStyle(GameManager.getFont(1), Color.WHITE));
         lbl.setFontScale(0.75f);
@@ -177,8 +181,18 @@ public class HintMenu implements Screen {
         backButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                GameManager.getNewGame().setWasPaused(true);
-                ((Game) Gdx.app.getApplicationListener()).setScreen(GameManager.getNewGame().getSavedGame());
+                try {
+                    if (GameManager.getNewGame()!=null) {
+                        GameManager.getNewGame().setWasPaused(true);
+                        ((Game) Gdx.app.getApplicationListener()).setScreen(GameManager.getNewGame().getSavedGame());
+                    } else {
+                        ((Game) Gdx.app.getApplicationListener()).setScreen(Menu.MAIN_MENU.getScreen());
+
+                    }
+                } catch (Exception e) {
+                    ((Game) Gdx.app.getApplicationListener()).setScreen(Menu.MAIN_MENU.getScreen());
+                }
+
             }
 
         });

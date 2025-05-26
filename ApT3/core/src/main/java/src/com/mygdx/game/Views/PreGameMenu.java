@@ -20,10 +20,8 @@ public class PreGameMenu implements Screen {
     private Stage stage;
     private Skin skin = GameManager.getSkin();
     private Table mainTable;
-    private Label characterName, weaponName , timeName;
-    private TextButton nextCBotton, prevCBotton, nextWBotton, prevWBotton, nextTBotton, prevTBotton , start , back;
-    private TextField rightKey , leftKey, upKey, downKey , shootKey , reload;
-    private int rightInt=0 , leftInt=0 , upInt=0 , downInt=0 , shootInt =0 , reloadInt =0;
+    private Label characterName, weaponName, timeName;
+    private TextButton nextCBotton, prevCBotton, nextWBotton, prevWBotton, nextTBotton, prevTBotton, start, back;
     private Image character, weapon;
     private int characterCounter = 0;
     private int weaponCounter = 0;
@@ -115,50 +113,6 @@ public class PreGameMenu implements Screen {
         timeTable.add(nextTBotton).size(80, 80).padLeft(10).row();
         mainTable.add(timeTable).width(stage.getWidth() * 0.8f).padTop(10).center().row();
 
-        Label keyboardLabel = new Label("Keyboard settings", skin);
-        Table keyboardTable = new Table();
-        keyboardLabel.setAlignment(Align.center);
-        keyboardTable.add(keyboardLabel).colspan(3).center().padTop(20).padBottom(10).row();
-
-        Label rightKeyLabel = new Label("Right", skin);
-        rightKeyLabel.setFontScale(0.8f);
-        keyboardTable.add(rightKeyLabel).padRight(5);
-        rightKey = new TextField("", skin);
-        keyboardTable.add(rightKey).size(80, 40).padRight(10);
-
-        Label leftKeyLabel = new Label("Left", skin);
-        leftKeyLabel.setFontScale(0.8f);
-        keyboardTable.add(leftKeyLabel).padRight(5);
-        leftKey = new TextField("", skin);
-        keyboardTable.add(leftKey).size(80, 40).padRight(10);
-
-        Label upKeyLabel = new Label("Up", skin);
-        upKeyLabel.setFontScale(0.8f);
-        keyboardTable.add(upKeyLabel).padRight(5);
-        upKey = new TextField("", skin);
-        keyboardTable.add(upKey).size(80, 40).padRight(10).row();
-
-        Label downKeyLabel = new Label("Down", skin);
-        downKeyLabel.setFontScale(0.8f);
-        keyboardTable.add(downKeyLabel).padRight(5);
-        downKey = new TextField("", skin);
-        keyboardTable.add(downKey).size(80, 40).padRight(10).padTop(10);
-
-        Label reloadLabel = new Label("Reload", skin);
-        reloadLabel.setFontScale(0.8f);
-        keyboardTable.add(reloadLabel).padRight(5);
-        reload = new TextField("", skin);
-        keyboardTable.add(reload).size(80, 40).padRight(10).padTop(10);
-
-        Label shootKeyLabel = new Label("Shoot", skin);
-        shootKeyLabel.setFontScale(0.8f);
-        keyboardTable.add(shootKeyLabel).padRight(5);
-        shootKey = new TextField("", skin);
-        keyboardTable.add(shootKey).size(80, 40).padTop(10);
-
-        mainTable.add(keyboardTable).width(stage.getWidth() * 0.8f).padTop(20).center().row();
-
-
         start = new TextButton("Start", skin);
         mainTable.add(start).width(200).padTop(20).center().row();
         back = new TextButton("Back", skin);
@@ -247,15 +201,10 @@ public class PreGameMenu implements Screen {
         start.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                NewGame newGame = new NewGame(time,player);
-                if (upInt!=0) newGame.setUpKey(upInt);
-                if (downInt!=0) newGame.setDownKey(downInt);
-                if (rightInt!=0) newGame.setRightKey(rightInt);
-                if (leftInt!=0) newGame.setLeftKey(leftInt);
-                if (shootInt!=0) newGame.setShootKey(shootInt);
-                if (reloadInt!=0) newGame.setShootKey(reloadInt);
+                NewGame newGame = new NewGame(time, player);
+
                 GameManager.setNewGame(newGame);
-                System.out.println("new gm");
+                System.out.println("new game created");
                 Weapon weapon1 = new Weapon(weaponType);
                 newGame.getPlayer().setWeapons(weapon1);
                 GameManager.getNewGame().getPlayer().initializePlayer();
@@ -270,76 +219,6 @@ public class PreGameMenu implements Screen {
                 ((Game) Gdx.app.getApplicationListener()).setScreen(Menu.MAIN_MENU.getScreen());
             }
 
-        });
-
-        leftKey.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                String down = leftKey.getText();
-                if (!down.isEmpty()) {
-                    for (Pair<String, Integer> pair : GameManager.getKeys()) {
-                        if (pair.getFirst().equals(down)) {
-                            leftInt = pair.getSecond()-68;
-                        }
-                    }
-                }
-            }
-        });
-
-        rightKey.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                String key = rightKey.getText();
-                if (!key.isEmpty()) {
-                    for (Pair<String, Integer> pair : GameManager.getKeys()) {
-                        if (pair.getFirst().equals(key)) {
-                            rightInt = pair.getSecond()-68;
-                        }
-                    }
-                }
-            }
-        });
-
-        upKey.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                String key = upKey.getText();
-                if (!key.isEmpty()) {
-                    for (Pair<String, Integer> pair : GameManager.getKeys()) {
-                        if (pair.getFirst().equals(key)) {
-                            upInt = pair.getSecond()-68;
-                        }
-                    }
-                }
-            }
-        });
-
-        downKey.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                String key = downKey.getText();
-                if (!key.isEmpty()) {
-                    for (Pair<String, Integer> pair : GameManager.getKeys()) {
-                        if (pair.getFirst().equals(key)) {
-                            downInt = pair.getSecond()-68;
-                        }
-                    }
-                }
-            }
-        });
-
-        shootKey.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                String key = shootKey.getText();
-                if (!key.isEmpty()) {
-                    for (Pair<String, Integer> pair : GameManager.getKeys()) {
-                        if (pair.getFirst().equals(key)) {
-                            shootInt = pair.getSecond()-68;
-                        }
-                    }
-                }
-            }
         });
 
     }
@@ -404,11 +283,11 @@ public class PreGameMenu implements Screen {
                 timeName.setText("5 min");
                 break;
             case 2:
-                time = 10 ;
+                time = 10;
                 timeName.setText("10 min");
                 break;
             case 3:
-                time = 20 ;
+                time = 20;
                 timeName.setText("20 min");
                 break;
 

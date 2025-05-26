@@ -138,32 +138,33 @@ public class MainGameScreen implements Screen {
         stage.addActor(player.getPlayerImage());
 
         Gdx.input.setInputProcessor(new InputProcessor() {
+
             @Override
             public boolean keyDown(int keycode) {
                 pressedKeys.add(keycode);
-                if (pressedKeys.contains(GameManager.getNewGame().getLeftKey()) &&
-                    pressedKeys.contains(GameManager.getNewGame().getUpKey())) {
+                if (pressedKeys.contains(GameManager.getLeftKey()) &&
+                    pressedKeys.contains(GameManager.getUpKey())) {
                     player.moveUpLeft();
-                } else if (pressedKeys.contains(GameManager.getNewGame().getRightKey()) &&
-                    pressedKeys.contains(GameManager.getNewGame().getUpKey())) {
+                } else if (pressedKeys.contains(GameManager.getRightKey()) &&
+                    pressedKeys.contains(GameManager.getUpKey())) {
                     player.moveUpRight();
-                } else if (pressedKeys.contains(GameManager.getNewGame().getLeftKey()) &&
-                    pressedKeys.contains(GameManager.getNewGame().getDownKey())) {
+                } else if (pressedKeys.contains(GameManager.getLeftKey()) &&
+                    pressedKeys.contains(GameManager.getDownKey())) {
                     player.moveDownLeft();
-                } else if (pressedKeys.contains(GameManager.getNewGame().getRightKey()) &&
-                    pressedKeys.contains(GameManager.getNewGame().getDownKey())) {
+                } else if (pressedKeys.contains(GameManager.getRightKey()) &&
+                    pressedKeys.contains(GameManager.getDownKey())) {
                     player.moveDownRight();
-                } else if (keycode == GameManager.getNewGame().getLeftKey()) {
+                } else if (keycode == GameManager.getLeftKey()) {
                     player.moveLeft();
-                } else if (keycode == GameManager.getNewGame().getRightKey()) {
+                } else if (keycode == GameManager.getRightKey()) {
                     player.moveRight();
-                } else if (keycode == GameManager.getNewGame().getUpKey()) {
+                } else if (keycode == GameManager.getUpKey()) {
                     player.moveUp();
-                } else if (keycode == GameManager.getNewGame().getDownKey()) {
+                } else if (keycode == GameManager.getDownKey()) {
                     player.moveDown();
-                } else if (keycode == GameManager.getNewGame().getShootKey()) {
+                } else if (keycode == GameManager.getShootKey() && !GameManager.isLeftShoot()) {
                     player.shoot();
-                } else if (keycode == GameManager.getNewGame().getReloadKey()) {
+                } else if (keycode == GameManager.getReloadKey()) {
                     player.getWeapons().setIsReloading(true);
                 } else if (keycode == Input.Keys.NUM_1) { // cheat code for time
                     time = 60;
@@ -181,7 +182,7 @@ public class MainGameScreen implements Screen {
                     GameManager.getNewGame().setSavedGame(MainGameScreen.this);
                     ((Game) Gdx.app.getApplicationListener()).setScreen(Menu.HINT_MENU.getScreen());
                 } else if (keycode == Input.Keys.NUM_3) { // hint menu
-                   GameManager.getNewGame().getPlayer().setXP4Level((player.getLevel() + 1) * 20);
+                    GameManager.getNewGame().getPlayer().setXP4Level((player.getLevel() + 1) * 20);
                 } else if (keycode == Input.Keys.NUM_4) {
                     spawnElder(1);
                     elderSpawned = true;
@@ -189,7 +190,6 @@ public class MainGameScreen implements Screen {
                 return true;
 
             }
-
             @Override
             public boolean keyUp(int keycode) {
                 pressedKeys.remove(keycode);
@@ -204,7 +204,10 @@ public class MainGameScreen implements Screen {
 
             @Override
             public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-                return false;
+                if (button == Input.Buttons.LEFT && GameManager.isLeftShoot()) {
+                    player.shoot();
+                }
+                return true;
             }
 
             @Override
@@ -509,7 +512,7 @@ public class MainGameScreen implements Screen {
         stage.draw();
         fixedStage.act(delta);
         fixedStage.draw();
-
+        
     }
 
     public void spawnMonsters(int count) {

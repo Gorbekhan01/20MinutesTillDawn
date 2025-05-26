@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import src.com.mygdx.game.Models.GameManager;
@@ -43,10 +44,10 @@ public class ScoreBoardMenu implements Screen {
         users.sort(Comparator.comparingInt(User::getScore).reversed());
 
 
-        createUI();
+        createMenu();
     }
 
-    private void createUI() {
+    private void createMenu() {
         mainTable = new Table();
         mainTable.setFillParent(true);
         stage.addActor(mainTable);
@@ -65,8 +66,6 @@ public class ScoreBoardMenu implements Screen {
         addBackButton();
 
 
-
-
     }
 
     private Table createScoreTable() {
@@ -81,12 +80,18 @@ public class ScoreBoardMenu implements Screen {
         scoreTable.defaults().pad(8).center();
 
         int rank = 1;
+        boolean isCurrentUser;
         for (User user : users) {
-            scoreTable.add(createDataLabel(String.valueOf(rank)));
-            scoreTable.add(createDataLabel(user.getUsername()));
-            scoreTable.add(createDataLabel(String.valueOf(user.getScore())));
-            scoreTable.add(createDataLabel(String.valueOf(user.getKills())));
-            scoreTable.add(createDataLabel(formatTime(user.getMostTimeSurvived())));
+            if (user.getUsername().equals(GameManager.getCurrentUser().getUsername())) {
+                isCurrentUser = true;
+            } else {
+                isCurrentUser = false;
+            }
+            scoreTable.add(createDataLabel(String.valueOf(rank), rank, isCurrentUser));
+            scoreTable.add(createDataLabel(user.getUsername(), rank, isCurrentUser));
+            scoreTable.add(createDataLabel(String.valueOf(user.getScore()), rank, isCurrentUser));
+            scoreTable.add(createDataLabel(String.valueOf(user.getKills()), rank, isCurrentUser));
+            scoreTable.add(createDataLabel(formatTime(user.getMostTimeSurvived()), rank, isCurrentUser));
             scoreTable.row();
             rank++;
         }
@@ -102,8 +107,29 @@ public class ScoreBoardMenu implements Screen {
         return label;
     }
 
-    private Label createDataLabel(String text) {
-        Label label = new Label(text, GameManager.getSkin());
+    private Label createDataLabel(String text, int rank, boolean isCurrentPlayer) {
+        Label label = new Label(text, new Label.LabelStyle(GameManager.getFont(1), Color.WHITE));
+        if (isCurrentPlayer) {
+            label.addAction(
+                Actions.forever(
+                    Actions.sequence(
+                        Actions.fadeOut(0.5f),
+                        Actions.fadeIn(0.5f)
+                    )
+                )
+            );
+        }
+        else if (rank == 1) {
+            label.setColor(Color.GOLD);
+        }
+        else if (rank == 2) {
+            label.setColor(Color.LIGHT_GRAY);
+        }
+        else if (rank == 3) {
+            label.setColor(Color.BROWN);
+        } else {
+            label.setColor(Color.WHITE);
+        }
         label.setFontScale(0.8f);
         return label;
     }
@@ -180,7 +206,7 @@ public class ScoreBoardMenu implements Screen {
 
     private void refreshTable() {
         stage.clear();
-        createUI();
+        createMenu();
     }
 
     private String formatTime(int seconds) {
@@ -201,13 +227,16 @@ public class ScoreBoardMenu implements Screen {
     }
 
     @Override
-    public void pause() {}
+    public void pause() {
+    }
 
     @Override
-    public void resume() {}
+    public void resume() {
+    }
 
     @Override
-    public void hide() {}
+    public void hide() {
+    }
 
     @Override
     public void dispose() {

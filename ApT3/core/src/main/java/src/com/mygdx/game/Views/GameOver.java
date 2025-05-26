@@ -78,6 +78,7 @@ public class GameOver implements Screen {
             @Override
             public void changed(ChangeListener.ChangeEvent event, Actor actor) {
 //                GameManager.getNewGame().getSavedGame().dispose();
+                GameManager.setNewGame(null);
                 ((Game) Gdx.app.getApplicationListener()).setScreen(Menu.MAIN_MENU.getScreen());
             }
         });

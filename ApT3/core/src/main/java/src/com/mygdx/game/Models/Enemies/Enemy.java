@@ -84,6 +84,7 @@ public abstract class Enemy {
             isExploding = true;
             GameManager.getNewGame().getPlayer().setKillCount();
             monsterImage.remove();
+            isDead = true;
             explosionImage.setPosition(position.x, position.y);
             Point point = new Point(position.x, position.y);
             GameManager.getNewGame().getGameStage().addActor(point.getImageBox());

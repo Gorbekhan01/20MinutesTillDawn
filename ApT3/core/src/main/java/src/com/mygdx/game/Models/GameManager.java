@@ -30,6 +30,14 @@ public class GameManager {
     private static Menu currentMenu = Menu.OPENING_SCREEN;
     private static final ArrayList<User> users = new ArrayList<>();
     private static NewGame newGame;
+    private static int rightKey = 32;
+    private static int leftKey = 29;
+    private static int upKey = 51;
+    private static int downKey = 47;
+    private static int shootKey = 62;
+    private static int reloadKey = 46;
+    private static boolean leftShoot = false;
+
     private static ArrayList<Pair<String, Integer>> keys = new ArrayList<>(
         List.of(
             new Pair<>("a", (int) 'a'), new Pair<>("b", (int) 'b'), new Pair<>("c", (int) 'c'),
@@ -200,5 +208,61 @@ public class GameManager {
         try (FileWriter writer = new FileWriter("users.json")) {
             gson.toJson(users, writer);
         }
+    }
+
+    public static int getRightKey() {
+        return rightKey;
+    }
+
+    public static void setRightKey(int rightKey) {
+        GameManager.rightKey = rightKey;
+    }
+
+    public static int getLeftKey() {
+        return leftKey;
+    }
+
+    public static void setLeftKey(int leftKey) {
+        GameManager.leftKey = leftKey;
+    }
+
+    public static int getUpKey() {
+        return upKey;
+    }
+
+    public static void setUpKey(int upKey) {
+        GameManager.upKey = upKey;
+    }
+
+    public static int getDownKey() {
+        return downKey;
+    }
+
+    public static void setDownKey(int downKey) {
+        GameManager.downKey = downKey;
+    }
+
+    public static int getShootKey() {
+        return shootKey;
+    }
+
+    public static void setShootKey(int shootKey) {
+        GameManager.shootKey = shootKey;
+    }
+
+    public static int getReloadKey() {
+        return reloadKey;
+    }
+
+    public static void setReloadKey(int reloadKey) {
+        GameManager.reloadKey = reloadKey;
+    }
+
+    public static boolean isLeftShoot() {
+        return leftShoot;
+    }
+
+    public static void setLeftShoot(boolean leftShoot) {
+        GameManager.leftShoot = leftShoot;
     }
 }
