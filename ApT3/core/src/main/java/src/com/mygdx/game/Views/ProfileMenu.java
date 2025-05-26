@@ -34,6 +34,7 @@ import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.File;
 import java.io.IOException;
+import java.util.Random;
 
 public class ProfileMenu implements Screen {
     private Stage stage;
@@ -44,7 +45,7 @@ public class ProfileMenu implements Screen {
     private Table mainTable;
     private ProfileMenuController controller;
     private Texture avatarTexture;
-    private Image avatarImage;
+    private Image avatarImage ;
     DragAndDrop dragAndDrop = new DragAndDrop();
 
 
@@ -54,6 +55,11 @@ public class ProfileMenu implements Screen {
         Gdx.input.setInputProcessor(stage);
         mainTable = new Table();
         controller = new ProfileMenuController();
+        avatarImage = new Image();
+        Texture avatarTexture = new Texture(Gdx.files.internal(GameManager.getAvatars()
+            .get(GameManager.getCurrentUser().getAvatarNumber())));
+        avatarImage.setDrawable(new Image(avatarTexture).getDrawable());
+
 
         createProfileMenu();
 
@@ -69,10 +75,7 @@ public class ProfileMenu implements Screen {
         textFieldStyle.font = GameManager.getFont(2);
 
 
-        Image avatarImage = new Image();
-        Texture avatarTexture = new Texture(Gdx.files.internal(GameManager.getAvatars()
-            .get(GameManager.getCurrentUser().getAvatarNumber())));
-        avatarImage.setDrawable(new Image(avatarTexture).getDrawable());
+
 
         selectFileButton = new TextButton("Select Image", skin);
         selectFileButton.setPosition(100, 100);
@@ -127,18 +130,7 @@ public class ProfileMenu implements Screen {
         selectFileButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                FileDialog fileDialog = new FileDialog((Frame) null, "select file", FileDialog.LOAD);
-                fileDialog.setMode(FileDialog.LOAD);
-                fileDialog.setVisible(true);
-
-                String selectedFilePath = fileDialog.getDirectory() + fileDialog.getFile();
-                if (selectedFilePath != null) {
-                    System.out.println("selected file: " + selectedFilePath);
-                    avatarTexture = new Texture(Gdx.files.absolute(selectedFilePath));
-                }
-                avatarImage = new Image(new TextureRegionDrawable(new TextureRegion(avatarTexture)));
-
-
+               updateAvatar();
             }
         });
 
@@ -181,6 +173,11 @@ public class ProfileMenu implements Screen {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 GameManager.getUsers().remove(GameManager.getCurrentUser());
+                try {
+                    GameManager.saveUsers();
+                } catch (Exception e) {
+                    System.out.println("Error saving users");
+                }
                 ((Game) Gdx.app.getApplicationListener()).setScreen(Menu.LOGIN_MENU.getScreen());
             }
         });
@@ -195,6 +192,13 @@ public class ProfileMenu implements Screen {
 
     }
 
+    private void updateAvatar() {
+        Random random = new Random();
+        int randomInt = random.nextInt(11);
+        Texture avatarTexture = new Texture(Gdx.files.internal(GameManager.getAvatars().get(randomInt)));
+        avatarImage.setDrawable(new Image(avatarTexture).getDrawable());
+        GameManager.getCurrentUser().setAvatarNumber(randomInt);
+    }
 
     @Override
     public void render(float delta) {

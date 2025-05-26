@@ -58,7 +58,7 @@ public class MainGameScreen implements Screen {
         camera = new OrthographicCamera();
         camera.setToOrtho(false, 800, 600);
         camera.zoom = 0.35f;
-        passedTime = 0;
+        passedTime = GameManager.getNewGame().getSurvivedTime();
         time = GameManager.getNewGame().getTime() * 60;
         System.out.println(time);
         System.out.println(GameManager.getNewGame().getTime());
@@ -131,7 +131,6 @@ public class MainGameScreen implements Screen {
             }
 
             GameManager.getNewGame().getEnemies().removeIf(Enemy::isDead);
-            GameManager.getNewGame().getPlayer().setXP4Level(18);
         }
 
 
@@ -347,6 +346,15 @@ public class MainGameScreen implements Screen {
                     stage.addActor(tree.getImage());
                 }
 
+                for (Bullet bullet : GameManager.getNewGame().getBullets()) {
+                    stage.addActor(bullet);
+                }
+
+                for (Point point : GameManager.getNewGame().getPoints()) {
+                    stage.addActor(point.getImageBox());
+                }
+
+
                 GameManager.getNewGame().setWasPaused(false);
             }
             GameManager.getNewGame().getPoints().removeIf(Point::getVisible);
@@ -403,7 +411,7 @@ public class MainGameScreen implements Screen {
 
 
             // spawning enemies
-            if (passedTime % 4 == 0) {
+            if (passedTime % 3 == 0) {
                 if (firstTimeSpawnedTentacle) {
                     int numberOfMonsters;
                     if (totalTime == 1) {
@@ -512,7 +520,7 @@ public class MainGameScreen implements Screen {
         stage.draw();
         fixedStage.act(delta);
         fixedStage.draw();
-        
+
     }
 
     public void spawnMonsters(int count) {

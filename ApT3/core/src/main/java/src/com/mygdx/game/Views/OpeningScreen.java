@@ -33,7 +33,7 @@ public class OpeningScreen implements Screen {
     public void show() {
         try {
             GameManager.loadUsers();
-        } catch (FileNotFoundException e) {
+        } catch (Exception e) {
             System.out.println("File not found");
         }
         stage = new Stage();

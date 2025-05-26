@@ -2,22 +2,17 @@ package src.com.mygdx.game.Models;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.math.Intersector;
-import src.com.mygdx.game.Models.Enemies.Elder;
 import src.com.mygdx.game.Models.Enemies.Enemy;
-import src.com.mygdx.game.Models.Enemies.EyeBat;
-import src.com.mygdx.game.Models.Enemies.TentacleMonster;
 
 public class Bullet extends Actor {
     private Image bulletImage;
     private Vector2 velocity;
-    private Stage stage = GameManager.getNewGame().getGameStage();
+    private Stage bulletStage = GameManager.getNewGame().getGameStage();
     private Rectangle box;
     private boolean isEyebat = false;
     private Texture bulletTexture = null;
@@ -45,7 +40,7 @@ public class Bullet extends Actor {
         } else {
             this.velocity = direction.nor().scl(250);
         }
-        stage.addActor(bulletImage);
+        bulletStage.addActor(bulletImage);
         this.isEyebat = isEyeBat;
     }
 
@@ -65,7 +60,6 @@ public class Bullet extends Actor {
         }
 
         if (!isEyebat) {
-
             for (Enemy enemy : GameManager.getNewGame().getEnemies()) {
                 if (enemy.getBox().overlaps(box) && !enemy.isDead()) {
                     enemy.setHp(GameManager.getNewGame().getPlayer().getWeapons().getDamage());
@@ -80,6 +74,10 @@ public class Bullet extends Actor {
             bulletImage.getY() > Gdx.graphics.getHeight() || bulletImage.getY() < 0) {
             bulletImage.remove();
         }
+    }
+
+    public Image getBulletImage() {
+        return bulletImage;
     }
 
 }

@@ -13,12 +13,6 @@ public class NewGame {
     private Player player;
     private Stage gameStage;
     private ArrayList<Bullet> bullets = new ArrayList<>();
-    private int rightKey = 32;
-    private int leftKey = 29;
-    private int upKey = 51;
-    private int downKey = 47;
-    private int shootKey = 62;
-    private int reloadKey = 46;
     private ArrayList<Enemy> enemies = new ArrayList<>();
     private ArrayList<Tree> trees = new ArrayList<>();
     private ArrayList<Point> points = new ArrayList<>();
@@ -61,53 +55,6 @@ public class NewGame {
         return bullets;
     }
 
-    public int getRightKey() {
-        return rightKey;
-    }
-
-    public void setRightKey(int rightKey) {
-        this.rightKey = rightKey;
-    }
-
-    public int getLeftKey() {
-        return leftKey;
-    }
-
-    public void setLeftKey(int leftKey) {
-        this.leftKey = leftKey;
-    }
-
-    public int getUpKey() {
-        return upKey;
-    }
-
-    public void setUpKey(int upKey) {
-        this.upKey = upKey;
-    }
-
-    public int getDownKey() {
-        return downKey;
-    }
-
-    public void setDownKey(int downKey) {
-        this.downKey = downKey;
-    }
-
-    public int getShootKey() {
-        return shootKey;
-    }
-
-    public void setShootKey(int shootKey) {
-        this.shootKey = shootKey;
-    }
-
-    public int getReloadKey() {
-        return reloadKey;
-    }
-
-    public void setReloadKey(int reloadKey) {
-        this.reloadKey = reloadKey;
-    }
 
     public ArrayList<Point> getPoints() {
         return points;
@@ -154,36 +101,12 @@ public class NewGame {
     }
 
 
-    public int getPlayerXP() {
-        return playerXP;
-    }
-
-    public void setPlayerXP(int playerXP) {
-        this.playerXP = playerXP;
-    }
-
-    public int getKills() {
-        return kills;
-    }
-
-    public void setKills(int kills) {
-        this.kills = kills;
-    }
-
     public boolean isPaused() {
         return paused;
     }
 
     public void setPaused(boolean paused) {
         this.paused = paused;
-    }
-
-    public boolean isLeftShootOn(){
-        return leftShoot;
-    }
-
-    public void setLeftShoot(boolean status) {
-        leftShoot = status;
     }
 
 

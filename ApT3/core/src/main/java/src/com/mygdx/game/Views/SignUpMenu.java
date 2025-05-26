@@ -142,7 +142,7 @@ public class SignUpMenu implements Screen {
                 user.setSecurityAnswer(securityAnswer);
                 try {
                     GameManager.saveUsers();
-                } catch (IOException e) {
+                } catch (Exception e) {
                     System.out.println("Error saving users");
                 }
 
