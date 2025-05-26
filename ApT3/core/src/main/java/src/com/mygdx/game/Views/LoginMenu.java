@@ -162,6 +162,7 @@ public class LoginMenu implements Screen {
                     securityQuestionLabel = new Label(currentUser.getSecurityQNumber(), skin);
                     securityQuestionLabel.setFontScale(0.85f);
                     answerField = new TextField("", skin);
+                    answerField.setStyle(textFieldStyle);
 
                     buttonTable.add(securityQuestionLabel).padTop(15).center().row();
                     buttonTable.add(answerField).width(180).height(30).padTop(10).center().row();
@@ -189,6 +190,7 @@ public class LoginMenu implements Screen {
                     errorLabel.setText("Correct! Now enter a new password.");
 
                     newPasswordField = new TextField("", skin);
+                    newPasswordField.setStyle(textFieldStyle);
                     buttonTable.add(new Label("New password:", skin)).padTop(10).center().row();
                     buttonTable.add(newPasswordField).width(180).height(30).padTop(10).center().row();
 

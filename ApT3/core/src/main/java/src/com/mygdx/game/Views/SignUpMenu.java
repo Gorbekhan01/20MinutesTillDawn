@@ -92,8 +92,6 @@ public class SignUpMenu implements Screen {
         backButton = new TextButton("Back", skin);
 
         Table buttonTable = new Table();
-        //default for all
-//        buttonTable.defaults().width(180).height(60).pad(0);
         buttonTable.add(signUpButton).width(180).height(70).row();
         buttonTable.add(guestButton).width(360).height(70).row();
         buttonTable.add(backButton).width(180).height(70).row();
@@ -140,13 +138,13 @@ public class SignUpMenu implements Screen {
                 user.setPassword(password);
                 user.setSecurityQNumber(securityQuestion);
                 user.setSecurityAnswer(securityAnswer);
+                GameManager.getUsers().add(user);
+
                 try {
                     GameManager.saveUsers();
                 } catch (Exception e) {
                     System.out.println("Error saving users");
                 }
-
-                GameManager.getUsers().add(user);
                 ((Game) Gdx.app.getApplicationListener()).setScreen(Menu.LOGIN_MENU.getScreen());
             }
         });
