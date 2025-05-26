@@ -10,4 +10,4 @@ Upgrade your arsenal, unlock new weapons and characters, and try to last till da
 - Randomly generated waves of enemies
 - Multiple weapons and upgrades
 - Challenging boss fights
-- Pixel-art style (or describe your style)
+- Pixel-art style
