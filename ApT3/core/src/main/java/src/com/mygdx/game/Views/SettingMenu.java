@@ -164,7 +164,7 @@ public class SettingMenu implements Screen {
                 if (rightInt != 0) GameManager.setRightKey(rightInt);
                 if (leftInt != 0) GameManager.setLeftKey(leftInt);
                 if (shootInt != 0) GameManager.setShootKey(shootInt);
-                if (reloadInt != 0) GameManager.setShootKey(reloadInt);
+                if (reloadInt != 0) GameManager.setReloadKey(reloadInt);
                 ((Game) Gdx.app.getApplicationListener()).setScreen(Menu.MAIN_MENU.getScreen());
             }
         });

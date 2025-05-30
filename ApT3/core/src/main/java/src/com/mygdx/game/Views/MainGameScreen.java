@@ -12,7 +12,6 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.utils.Timer;
@@ -34,10 +33,10 @@ public class MainGameScreen implements Screen {
     private Texture backgroundTexture;
     private Image backgroundImage;
     private Player player;
-    private Set<Integer> pressedKeys = new HashSet<>();
+    private final Set<Integer> pressedKeys = new HashSet<>();
     private Label xpLabel, timeLabel, weaponLabel;
-    private ArrayList<Image> heartImages = new ArrayList<>();
-    private ArrayList<Tree> trees = new ArrayList<>();
+    private final ArrayList<Image> heartImages = new ArrayList<>();
+    private final ArrayList<Tree> trees = new ArrayList<>();
     private double time;
     private double totalTime;
     private float timeAccumulator = 0;
@@ -47,9 +46,8 @@ public class MainGameScreen implements Screen {
     private World world;
     private boolean elderSpawned = false;
     private float lasTimeSpawnedTentacle = 0;
-    private float getLasTimeSpawnedEyebat = 0;
     private boolean firstTimeSpawnedTentacle = true;
-    private boolean firstTimeSpawnedEyebat = true;
+    private boolean firstTimeSpawnedEyeBat = true;
     ShapeRenderer shapeRenderer = new ShapeRenderer();
 
     @Override
@@ -179,12 +177,16 @@ public class MainGameScreen implements Screen {
                     GameManager.getNewGame().setSurvivedTime(passedTime);
                     GameManager.getNewGame().setTime(time / 60);
                     GameManager.getNewGame().setSavedGame(MainGameScreen.this);
+                    stage.clear();
+                    fixedStage.clear();
                     ((Game) Gdx.app.getApplicationListener()).setScreen(Menu.HINT_MENU.getScreen());
                 } else if (keycode == Input.Keys.NUM_3) { // hint menu
                     GameManager.getNewGame().getPlayer().setXP4Level((player.getLevel() + 1) * 20);
                 } else if (keycode == Input.Keys.NUM_4) {
-                    spawnElder(1);
-                    elderSpawned = true;
+                    if (!elderSpawned) {
+                        spawnElder(1);
+                        elderSpawned = true;
+                    }
                 }
                 return true;
 
@@ -245,7 +247,7 @@ public class MainGameScreen implements Screen {
         Label label = new Label("", new Label.LabelStyle(GameManager.getFont(1), Color.GOLDENROD));
 
         Actor progressBar = new Actor() {
-            private ShapeRenderer shapeRenderer = new ShapeRenderer();
+            private final ShapeRenderer shapeRenderer = new ShapeRenderer();
 
             @Override
             public void draw(Batch batch, float parentAlpha) {
@@ -288,7 +290,7 @@ public class MainGameScreen implements Screen {
 
             fixedStage.addActor(label);
 
-            label.addAction(Actions.moveTo(Gdx.graphics.getWidth() / 2 - 50, Gdx.graphics.getHeight() - 30, 1.5f));
+            label.addAction(Actions.moveTo((float) Gdx.graphics.getWidth() / 2 - 50, Gdx.graphics.getHeight() - 30, 1.5f));
 
             GameManager.getNewGame().setPaused(true);
 
@@ -306,7 +308,7 @@ public class MainGameScreen implements Screen {
         if (!GameManager.getNewGame().isPaused()) {
             progressBar.setPosition(0, Gdx.graphics.getHeight() - 30);
             label = new Label("Level " + player.getLevel(), new Label.LabelStyle(GameManager.getFont(1), Color.WHITE));
-            label.setPosition(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() - 30);
+            label.setPosition((float) Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() - 30);
             label.setFontScale(0.8f);
             progressBar.setSize(Gdx.graphics.getWidth(), 40);
         }
@@ -352,6 +354,12 @@ public class MainGameScreen implements Screen {
 
                 for (Point point : GameManager.getNewGame().getPoints()) {
                     stage.addActor(point.getImageBox());
+                }
+
+                if (GameManager.getNewGame().isWasPaused() && GameManager.getNewGame().isElderAlive()) {
+                    Bound bound = new Bound(stage);
+                    GameManager.getNewGame().setGroundLimited(bound);
+                    stage.addActor(GameManager.getNewGame().getBound());
                 }
 
 
@@ -435,7 +443,7 @@ public class MainGameScreen implements Screen {
             }
 
             if (passedTime >= totalTime / 4) {
-                if (firstTimeSpawnedEyebat) {
+                if (firstTimeSpawnedEyeBat) {
                     if ((passedTime & 10) == 0) {
                         int numberOfMonsters;
                         if (totalTime == 1) {
@@ -446,7 +454,7 @@ public class MainGameScreen implements Screen {
                         spawnEyeBat(numberOfMonsters);
                     }
                     lasTimeSpawnedTentacle = passedTime;
-                    firstTimeSpawnedEyebat = false;
+                    firstTimeSpawnedEyeBat = false;
                 } else {
                     if (passedTime != lasTimeSpawnedTentacle) {
                         if ((passedTime & 10) == 0) {
@@ -547,6 +555,7 @@ public class MainGameScreen implements Screen {
 
             }
             GameManager.getNewGame().getEnemies().add(monster);
+            assert monster != null;
             stage.addActor(monster.getMonsterImage());
         }
     }
@@ -575,6 +584,7 @@ public class MainGameScreen implements Screen {
 
             }
             GameManager.getNewGame().getEnemies().add(monster);
+            assert monster != null;
             stage.addActor(monster.getMonsterImage());
         }
     }
@@ -603,7 +613,12 @@ public class MainGameScreen implements Screen {
 
             }
             GameManager.getNewGame().getEnemies().add(monster);
+            assert monster != null;
             stage.addActor(monster.getMonsterImage());
+            Bound bound = new Bound(stage);
+            stage.addActor(bound);
+            GameManager.getNewGame().setGroundLimited(bound);
+            GameManager.getNewGame().setElderAlive(true);
         }
     }
 

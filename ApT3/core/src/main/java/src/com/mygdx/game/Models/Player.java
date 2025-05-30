@@ -123,6 +123,19 @@ public class Player {
         stateTime += delta;
         position.add(velocity.x * delta, velocity.y * delta);
 
+        if (GameManager.getNewGame().isGroundLimited()) {
+            if (GameManager.getNewGame().getBound().isPlayerInside(this)) {
+                position.x -= velocity.x * delta;
+                position.y -= velocity.y * delta;
+                if (!damaged) {
+                    HP -= 1;
+                    damaged = true;
+                    invincibleTimer = 2f;
+                }
+            }
+        }
+
+
         if (position.x < -playerImage.getWidth() / 2) position.x = -playerImage.getWidth() / 2;
         if (position.x + playerImage.getWidth() / 2 > Gdx.graphics.getWidth())
             position.x = Gdx.graphics.getWidth() - playerImage.getWidth() / 2;
@@ -212,9 +225,6 @@ public class Player {
         this.weapon = weapons;
     }
 
-    public Heroes getHero() {
-        return hero;
-    }
 
     public void setHero(Heroes hero) {
         this.hero = hero;
@@ -256,9 +266,6 @@ public class Player {
         return box;
     }
 
-    public float getInvincibleTimer() {
-        return invincibleTimer;
-    }
 
     public void setInvincibleTimer(float invincibleTimer) {
         this.invincibleTimer = invincibleTimer;
@@ -296,9 +303,6 @@ public class Player {
         maxHP += add;
     }
 
-    public int getMaxSpeed() {
-        return maxSpeed;
-    }
 
     public void addMaxSpeed() {
         maxSpeed = maxSpeed * 2;

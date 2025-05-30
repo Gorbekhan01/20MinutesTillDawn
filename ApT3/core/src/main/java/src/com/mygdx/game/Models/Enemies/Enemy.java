@@ -81,6 +81,10 @@ public abstract class Enemy {
 
     protected void checkDeath() {
         if (Hp <= 0 && !isExploding) {
+            if (this instanceof Elder) {
+                GameManager.getNewGame().setElderAlive(false);
+                GameManager.getNewGame().resetGroundLimited();
+            }
             isExploding = true;
             GameManager.getNewGame().getPlayer().setKillCount();
             monsterImage.remove();

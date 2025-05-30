@@ -20,11 +20,10 @@ public class NewGame {
     private int survivedTime = 0;
     public MainGameScreen savedGame = new MainGameScreen();
     public boolean wasPaused = false;
-    private int playerXP = 0;
-    private int kills = 0;
-    private double gameTime = 0;
     private boolean paused = false;
-    private boolean leftShoot = false;
+    private boolean isGroundLimited = false;
+    private Bound bound;
+    private boolean isElderAlive = false;
 
     public NewGame(double time, Player player) {
         this.time = time;
@@ -108,6 +107,34 @@ public class NewGame {
     public void setPaused(boolean paused) {
         this.paused = paused;
     }
+
+    public Bound getBound() {
+        return bound;
+    }
+
+    public void setGroundLimited(Bound bound) {
+        isGroundLimited = true;
+        this.bound = bound;
+    }
+
+    public boolean isGroundLimited() {
+        return isGroundLimited;
+    }
+
+    public void resetGroundLimited() {
+        isGroundLimited = false;
+    }
+
+    public boolean isElderAlive() {
+        return isElderAlive;
+    }
+
+    public void setElderAlive(boolean elderAlive) {
+        isElderAlive = elderAlive;
+    }
+
+
+
 
 
 }
