@@ -12,8 +12,6 @@ public class Bound extends Actor {
     private float elapsedTime = 0;
     private int frameIndex = 0;
     private float frameDuration = 0.1f;
-
-    // تعریف محدوده‌ی حصار
     private float minX, maxX, minY, maxY;
 
     public Bound(Stage stage) {
@@ -42,8 +40,8 @@ public class Bound extends Actor {
         float worldHeight = stage.getHeight();
         float fenceThickness = 20;
 
-        images[2].setBounds(100, 100, fenceThickness, worldHeight - 200); // چپ
-        images[3].setBounds(worldWidth - fenceThickness - 100, 100, fenceThickness, worldHeight - 200); // راست
+        images[2].setBounds(100, 100, fenceThickness, worldHeight - 200);
+        images[3].setBounds(worldWidth - fenceThickness - 100, 100, fenceThickness, worldHeight - 200);
 
         images[0].setRotation(90);
         images[1].setRotation(90);
